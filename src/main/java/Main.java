@@ -1,14 +1,11 @@
-import java.text.SimpleDateFormat;
-
-import me.test.HashTest;
-import me.test.NonAsciiCharRemoval;
-
+import me.test.*;
 
 
 public class Main {
     public static void main(String[] args) {
 //        NonAsciiCharRemoval.testControlCharsRemoval();
-        HashTest.hashPassword("campus123", "xMjnq");
+//        HashTest.hashPassword("campus123", "xMjnq");
+        System.out.println(Guid.getGuid());
     }
 
 }
