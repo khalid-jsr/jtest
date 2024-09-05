@@ -3,8 +3,10 @@ import me.test.*;
 
 public class Main {
     public static void main(String[] args) {
-//        NonAsciiCharRemoval.testControlCharsRemoval();
+        NonAsciiCharRemoval.testControlCharsRemoval();
+
 //        HashTest.hashPassword("campus123", "xMjnq");
+
         //System.out.println(Guid.getGuid());
 
         /*
@@ -21,9 +23,11 @@ public class Main {
         gt.test();
         */
 
+        /*
         FloatTest ft = new FloatTest();
         System.out.println("Class: " + ft.testFloatAsClass());
         System.out.println("Primitive: " + ft.testFloatAsPrimitive());
+        */
 
     }
 
