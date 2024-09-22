@@ -3,9 +3,9 @@ import me.test.*;
 
 public class Main {
     public static void main(String[] args) {
-        NonAsciiCharRemoval.testControlCharsRemoval();
+//        NonAsciiCharRemoval.testControlCharsRemoval();
 
-//        HashTest.hashPassword("campus123", "xMjnq");
+//        System.out.println(HashTest.hashPassword("campus123", "lMBf5"));
 
         //System.out.println(Guid.getGuid());
 
@@ -28,6 +28,8 @@ public class Main {
         System.out.println("Class: " + ft.testFloatAsClass());
         System.out.println("Primitive: " + ft.testFloatAsPrimitive());
         */
+
+        BigDecimalTest.test();
 
     }
 
