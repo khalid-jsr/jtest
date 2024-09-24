@@ -10,13 +10,13 @@ public class NonAsciiCharRemoval {
         System.out.println("==> Starting [testControlCharsRemoval] at " + CommonConfig.sdf.format(System.currentTimeMillis()));
 
         String originalText = "1ˢᵗ“2ⁿᵈ”3ʳᵈ‘4’5 zzz María Gómez DD\nCC\rBB\u00000\u00011\u00022\u00033\u00044\u00055\u00066\u00077\u00088\t9 a\u000bb\u000ccd\u000ee\u000ff\u0010g\u0011h\u0012i\u0013j\u0014k\u0015l\u0016m\u0017n\u0018o\u0019p\u001aq\u001br\u001cs\u001dt\u001eu\u001fv\u0080w\u0081x\u0082y\u0083z\u0084A\u0085B\u0086C\u0087D\u0088E\u0089F\u008aG\u008bH\u008cI\u008dJ\u008eK\u008fL\u0090M\u0091N\u0092O\u0093P\u0094Q\u0095R\u0096S\u0097T\u0098U\u0099V\u009aW\u009bX\u009cY\u009dZ\u009eAV\u009fMW";
-        String processedText = replaceControlCharsAndMsWordCharsByPrintableChars(originalText);
+        String processedText = replaceControlCharsAndMicrosoftWordCharsByPrintableChars(originalText);
         System.out.println("(1) Original text: \n[" + originalText + "]\n");
         System.out.println("(1) Processed text: \n[" + processedText + "]");
 
         System.out.println("--------------------------------------------------------");
         originalText = "a\u007Fb\u0081c\u008Dd\u008Fe\u0090f\u009Dg\u201Ah\u201Ei\u2026j\u02C6k\u2030l\u2039m\u2018n\u2019o\u201Cp\u201Dq\u2022r\u2013s\u2014t\u02DCu\u2122v\u203Aw\u00A1x\u00A9y\u00AAz\u00ABA\u00ACB\u00ADC\u00AED\u00B7E\u00BAF\u00BBG\u00BCH\u00BDI\u00BEJ\u00BFK\u00D7L\u00F7M\u2192N\u2190O\u2264P\u2265Q\u2260R\u2032S\u2033";
-        processedText = replaceControlCharsAndMsWordCharsByPrintableChars(originalText);
+        processedText = replaceControlCharsAndMicrosoftWordCharsByPrintableChars(originalText);
         System.out.println("(2) Original text: \n[" + originalText + "]\n");
         System.out.println("(2) Processed text: \n[" + processedText + "]");
 
@@ -24,7 +24,7 @@ public class NonAsciiCharRemoval {
     }
 
 
-    private static String replaceControlCharsAndMsWordCharsByPrintableChars(String inputString) {
+    private static String replaceControlCharsAndMicrosoftWordCharsByPrintableChars(String inputString) {
         Map<String, String> stringReplacements = new HashMap<>();
         stringReplacements.put("1\u02E2\u1D57", "1st"); // '1ˢᵗ'
         stringReplacements.put("2\u207F\u1D48", "2nd"); // '2ⁿᵈ'
