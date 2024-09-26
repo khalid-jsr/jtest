@@ -29,7 +29,13 @@ public class Main {
         System.out.println("Primitive: " + ft.testFloatAsPrimitive());
         */
 
-        BigDecimalTest.test();
+//        BigDecimalTest.test();
+
+//        SubtringTest.test();
+
+//        DateTest.addMonthToCalendar();
+
+        ExceptionTest.test();
 
     }
 
