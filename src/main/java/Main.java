@@ -1,4 +1,5 @@
 import me.test.*;
+import me.test.comm.RestTest;
 import me.test.comm.SoapTest;
 
 
@@ -38,7 +39,8 @@ public class Main {
 
 //        ExceptionTest.test();
 
-        SoapTest.test();
+//        SoapTest.test();
+        RestTest.test();
 
     }
 

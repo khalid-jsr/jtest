@@ -8,19 +8,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+
 import me.util.FileReaderUtil;
+import static me.test.comm.Utils.processTemplate;
 
 
 public class SoapTest {
-    private String processTemplate(String template, Map<String, String> requestMap) {
-        String processedTemplate = template;
-        for (Map.Entry<String, String> entry : requestMap.entrySet()) {
-            String placeholder = "${{" + entry.getKey() + "}}";
-            processedTemplate = processedTemplate.replace(placeholder, entry.getValue());
-        }
-        return processedTemplate;
-    }
-
     protected String sendSoapRequest(String url, String xmlTemplate, Map<String, String> requestMap) {
         String soapRequest = processTemplate(xmlTemplate, requestMap);
 
@@ -64,46 +57,4 @@ public class SoapTest {
         String soapResponse = st.sendSoapRequest(soapUrl, xml, requestMap);
         System.out.println(soapResponse);
     }
-
-    /*// SOAP request implementation
-    public Map<String, String> sendSoapRequest(String xmlTemplate, Map<String, String> requestMap, String url) {
-        String soapRequest = processTemplate(xmlTemplate, requestMap);
-
-        Map<String, String> responseMap = new HashMap<>();
-        try {
-            // Create SOAP message
-            MessageFactory messageFactory = MessageFactory.newInstance();
-            SOAPMessage soapMessage = messageFactory.createMessage();
-            SOAPPart soapPart = soapMessage.getSOAPPart();
-
-            // Create envelope and body
-            SOAPEnvelope envelope = soapPart.getEnvelope();
-            SOAPBody body = envelope.getBody();
-            SOAPBodyElement bodyElement = body.addBodyElement(envelope.createName("PaymentRequest", "ns", "http://example.com/ns"));
-            for (Map.Entry<String, String> entry : requestMap.entrySet()) {
-                String key = entry.getKey();
-                String value = entry.getValue();
-                bodyElement.addChildElement(key, value);
-            }
-
-            // Send SOAP message
-            URL endpoint = new URL(url);
-            SOAPConnection connection = SOAPConnectionFactory.newInstance().createConnection();
-            SOAPMessage response = connection.call(soapMessage, endpoint);
-
-            // Extract response
-            SOAPBody responseBody = response.getSOAPBody();
-            responseBody.getChildElements().forEachRemaining(element -> {
-                SOAPElement soapElement = (SOAPElement) element;
-                responseMap.put(soapElement.getNodeName(), soapElement.getValue());
-            });
-
-            connection.close();
-        } catch (SOAPException | MalformedURLException e) {
-            e.printStackTrace();
-        }
-
-        return responseMap;
-    }
-    */
 }

@@ -1,0 +1,8 @@
+{
+  "authenticateTestRequest": {
+    "merchantAuthentication": {
+      "name": "${{id}}",
+      "transactionKey": "${{key}}"
+    }
+  }
+}
