@@ -1,4 +1,5 @@
 import me.test.*;
+import me.test.comm.SoapTest;
 
 
 public class Main {
@@ -35,7 +36,9 @@ public class Main {
 
 //        DateTest.addMonthToCalendar();
 
-        ExceptionTest.test();
+//        ExceptionTest.test();
+
+        SoapTest.test();
 
     }
 
