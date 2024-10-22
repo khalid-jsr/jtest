@@ -1,0 +1,265 @@
+package me.test.comm;
+
+import java.util.*;
+import javax.xml.parsers.*;
+import javax.xml.xpath.*;
+import org.w3c.dom.*;
+import java.io.StringReader;
+import org.xml.sax.InputSource;
+import javax.xml.namespace.NamespaceContext;
+
+
+public class XmlExtractor {
+
+    private static final String VARIABLE_PATTERN = "\\$\\{\\{([a-zA-Z0-9\\-_]+?)\\}\\}";
+
+    public static void test() {
+        String templateXml =
+                "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
+                "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+                "  <soap:Body>" +
+                "    <CountryCurrency xmlns=\"http://www.oorsprong.org/websamples.countryinfo\" CodeStandard=\"${{countryCodeStandard}}\">" +
+                "      <sCountryISOCode>${{countryCode}}</sCountryISOCode>" +
+                "    </CountryCurrency>" +
+                "    <MetaData>" +
+                "      <Meta attrib=\"City\">${{city}}</Meta>" +
+                "    </MetaData>" +
+                "    <KeyAttribs symantics=\"${{attribSym}}\">" +
+                "      <KeyAttrib>" +
+                "        <AttribName>Has Mountain</AttribName>" +
+                "        <AttribValue></AttribValue>" +
+                "      </KeyAttrib>" +
+                "      <KeyAttrib>" +
+                "        <AttribName>Main Religion</AttribName>" +
+                "        <AttribValue>${{religion}}</AttribValue>" +
+                "      </KeyAttrib>" +
+                "    </KeyAttribs>" +
+                "    <Error code=\"${{errorCode}}\">" +
+                "      <Message>${{errorMessage}}</Message>" +
+                "    </Error>" +
+                "  </soap:Body>" +
+                "</soap:Envelope>";
+
+        String actualXml =
+                "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
+                "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
+                "  <soap:Body>" +
+                "    <CountryCurrency xmlns=\"http://www.oorsprong.org/websamples.countryinfo\"  CodeStandard=\"ISO 83\">" +
+                "      <sCountryISOCode>US</sCountryISOCode>" +
+                "    </CountryCurrency>" +
+                "    <MetaData>" +
+                "      <Meta attrib=\"Country\">Bangladesh</Meta>" +
+                "      <Meta attrib=\"City\">Dhaka</Meta>" +
+                "      <Meta attrib=\"Language\">Bangla</Meta>" +
+                "    </MetaData>" +
+                "    <KeyAttribs>" +
+                "      <KeyAttrib>" +
+                "        <AttribName>Population</AttribName>" +
+                "        <AttribValue>20,25,36,896</AttribValue>" +
+                "      </KeyAttrib>" +
+                "      <KeyAttrib>" +
+                "        <AttribName>Main Religion</AttribName>" +
+                "        <AttribValue>Islam</AttribValue>" +
+                "      </KeyAttrib>" +
+                "      <KeyAttrib>" +
+                "        <AttribName>Has Mountain</AttribName>" +
+                "        <AttribValue>false</AttribValue>" +
+                "      </KeyAttrib>" +
+                "      <KeyAttrib>" +
+                "        <AttribName unit=\"sq. KM\">Area</AttribName>" +
+                "        <AttribValue>1,44,000</AttribValue>" +
+                "      </KeyAttrib>" +
+                "    </KeyAttribs>" +
+                "  </soap:Body>" +
+                "</soap:Envelope>";
+
+        XmlExtractor extractor = new XmlExtractor();
+        Map<String, String> result = null;
+
+        try {
+            result = extractor.extract(templateXml, actualXml);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        result.forEach((k, v) -> System.out.println(k + " => [" + v + "]"));
+    }
+
+    public Map<String, String> extract(String templateXml, String actualXml) throws Exception {
+        Map<String, String> resultMap = new HashMap<>();
+
+        // Parse the template and actual XML
+        DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+        factory.setNamespaceAware(true);
+        DocumentBuilder builder = factory.newDocumentBuilder();
+        Document templateDoc = builder.parse(new InputSource(new StringReader(templateXml)));
+        Document actualDoc = builder.parse(new InputSource(new StringReader(actualXml)));
+
+        // Create a NamespaceContext from the template XML
+        GenericNamespaceContext namespaceContext = createNamespaceContext(templateDoc);
+
+        // XPath setup with namespace support
+        XPathFactory xpathFactory = XPathFactory.newInstance();
+        XPath xpath = xpathFactory.newXPath();
+        xpath.setNamespaceContext(namespaceContext);
+
+        // Process nodes recursively with XPath
+        processNode(templateDoc.getDocumentElement(), actualDoc, resultMap, "/", xpath);
+
+        return resultMap;
+    }
+
+    private GenericNamespaceContext createNamespaceContext(Document templateDoc) {
+        GenericNamespaceContext namespaceContext = new GenericNamespaceContext();
+        extractNamespaces(templateDoc.getDocumentElement(), namespaceContext);
+        return namespaceContext;
+    }
+
+    private void extractNamespaces(Node node, GenericNamespaceContext namespaceContext) {
+        // Extract namespace from node and add to context
+        if (node.getNodeType() == Node.ELEMENT_NODE) {
+            String prefix = node.getPrefix();
+            String uri = node.getNamespaceURI();
+            if (uri != null && !uri.isEmpty()) {
+                namespaceContext.addNamespace(prefix != null ? prefix : "", uri);
+            }
+        }
+
+        // Recursively extract namespaces from child nodes
+        NodeList children = node.getChildNodes();
+        for (int i = 0; i < children.getLength(); i++) {
+            extractNamespaces(children.item(i), namespaceContext);
+        }
+    }
+
+    /*private void processNode(Node templateNode, Document actualDoc, Map<String, String> resultMap, String currentXPath, XPath xpath) throws Exception {
+        NamedNodeMap templateAttributes = templateNode.getAttributes();
+
+        // Check attributes in the template
+        if (templateAttributes != null) {
+            for (int i = 0; i < templateAttributes.getLength(); i++) {
+                Node templateAttr = templateAttributes.item(i);
+                String templateValue = templateAttr.getNodeValue();
+                if (isVariable(templateValue)) {
+                    String variableName = extractVariableName(templateValue);
+                    String xpathExpression = currentXPath + "/@" + templateAttr.getNodeName();
+                    String actualValue = evaluateXPath(actualDoc, xpathExpression, xpath);
+                    resultMap.put(variableName, actualValue != null ? actualValue : null);
+                }
+            }
+        }
+
+        // Check the text content of the node
+        String templateTextContent = templateNode.getTextContent().trim();
+        if (isVariable(templateTextContent)) {
+            String variableName = extractVariableName(templateTextContent);
+            String xpathExpression = currentXPath;
+            String actualValue = evaluateXPath(actualDoc, xpathExpression, xpath);
+            resultMap.put(variableName, actualValue != null ? actualValue : null);
+        }
+
+        // Process child nodes recursively
+        NodeList templateChildren = templateNode.getChildNodes();
+        for (int i = 0; i < templateChildren.getLength(); i++) {
+            Node childNode = templateChildren.item(i);
+            if (childNode.getNodeType() == Node.ELEMENT_NODE) {
+//                String childXPath = ("/".equals(currentXPath) ? "" : currentXPath) + "/" + childNode.getNodeName();
+                String childXPath = currentXPath + "/" + childNode.getNodeName();
+                processNode(childNode, actualDoc, resultMap, childXPath, xpath);
+            }
+        }
+    }*/
+
+    private void processNode(Node templateNode, Document actualDoc, Map<String, String> resultMap, String currentXPath, XPath xpath) throws Exception {
+        NamedNodeMap templateAttributes = templateNode.getAttributes();
+
+        // Handle attributes in the template
+        if (templateAttributes != null) {
+            for (int i = 0; i < templateAttributes.getLength(); i++) {
+                Node templateAttr = templateAttributes.item(i);
+                String templateValue = templateAttr.getNodeValue();
+                if (isVariable(templateValue)) {
+                    String variableName = extractVariableName(templateValue);
+                    String xpathExpression = currentXPath + "/@" + templateAttr.getNodeName();
+                    String actualValue = evaluateXPath(actualDoc, xpathExpression, xpath);
+                    resultMap.put(variableName, actualValue != null ? actualValue : null);
+                }
+            }
+        }
+
+        // Handle element text content in the template (only if it's a leaf node)
+        if (isLeafNode(templateNode)) {
+            String templateTextContent = templateNode.getTextContent().trim();
+            if (isVariable(templateTextContent)) {
+                String variableName = extractVariableName(templateTextContent);
+
+                // Generate XPath with sibling-based condition dynamically if sibling exists
+                String siblingXPathCondition = getSiblingCondition(templateNode, currentXPath, actualDoc, xpath);
+                String actualValueXPath = siblingXPathCondition != null ? siblingXPathCondition : currentXPath;
+
+                String actualValue = evaluateXPath(actualDoc, actualValueXPath, xpath);
+                resultMap.put(variableName, actualValue != null ? actualValue : null);
+            }
+        }
+
+        // Recursively process child nodes
+        NodeList templateChildren = templateNode.getChildNodes();
+        for (int i = 0; i < templateChildren.getLength(); i++) {
+            Node childNode = templateChildren.item(i);
+            if (childNode.getNodeType() == Node.ELEMENT_NODE) {
+                String childXPath = currentXPath + "/" + childNode.getNodeName();
+                processNode(childNode, actualDoc, resultMap, childXPath, xpath);
+            }
+        }
+    }
+
+    // Helper method to check if a node is a leaf (i.e., has no child elements)
+    private boolean isLeafNode(Node node) {
+        NodeList children = node.getChildNodes();
+        for (int i = 0; i < children.getLength(); i++) {
+            if (children.item(i).getNodeType() == Node.ELEMENT_NODE) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private String getSiblingCondition(Node templateNode, String currentXPath, Document actualDoc, XPath xpath) throws Exception {
+        // Generic sibling condition detection based on the structure of the template
+        Node parent = templateNode.getParentNode();
+        if (parent == null || !(parent instanceof Element)) {
+            return null;
+        }
+
+        NodeList siblings = parent.getChildNodes();
+        for (int i = 0; i < siblings.getLength(); i++) {
+            Node sibling = siblings.item(i);
+            if (sibling.getNodeType() == Node.ELEMENT_NODE && sibling != templateNode) {
+                // Use the sibling's content to generate a condition-based XPath
+                String siblingName = sibling.getNodeName();
+                String siblingValue = sibling.getTextContent().trim();
+                if (!siblingValue.isEmpty()) {
+                    // Create an XPath expression with a condition based on the sibling value
+                    return currentXPath + "[" + siblingName + "='" + siblingValue + "']";
+                }
+            }
+        }
+        return null;
+    }
+
+    private boolean isVariable(String value) {
+        return value != null && value.matches(VARIABLE_PATTERN);
+    }
+
+    private String extractVariableName(String value) {
+        return value.replaceAll("\\$\\{\\{", "").replaceAll("\\}\\}", "");
+    }
+
+    private String evaluateXPath(Document doc, String xpathExpression, XPath xpath) throws Exception {
+        XPathExpression expr = xpath.compile(xpathExpression);
+        Node resultNode = (Node) expr.evaluate(doc, XPathConstants.NODE);
+        String s = resultNode != null ? resultNode.getTextContent() : null;
+//        System.out.println("XPath: [" + xpath + "] ==> Expr: [" + xpathExpression + "]");
+        return s;
+    }
+}

@@ -37,7 +37,6 @@ public class RestTest {
                     // If it's a POST, build the request body based on requestMap
                     requestBody = processTemplate(payload, requestMap);
                     requestBuilder.POST(HttpRequest.BodyPublishers.ofString(requestBody));
-//                            .header("Content-Type", "application/json"); // Or "application/x-www-form-urlencoded" depending on API
                     break;
                 case PUT:
                     requestBody = processTemplate(payload, requestMap);

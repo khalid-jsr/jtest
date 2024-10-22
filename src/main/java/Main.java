@@ -1,6 +1,7 @@
 import me.test.*;
 import me.test.comm.RestTest;
 import me.test.comm.SoapTest;
+import me.test.comm.XmlExtractor;
 
 
 public class Main {
@@ -40,7 +41,9 @@ public class Main {
 //        ExceptionTest.test();
 
 //        SoapTest.test();
-        RestTest.test();
+//        RestTest.test();
+
+        XmlExtractor.test();
 
     }
 
