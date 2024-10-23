@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+    <soap:Body>
+        <CountryCurrency xmlns="http://www.oorsprong.org/websamples.countryinfo" CodeStandard="${{countryCodeStandard}}">
+            <sCountryISOCode>${{countryCode}}</sCountryISOCode>
+        </CountryCurrency>
+        <MetaData>
+            <Meta attrib="City">${{city}}</Meta>
+            <Meta attrib="Language">Bangla</Meta>
+        </MetaData>
+        <MetaData2>
+            <Meta attrib="Language">${{luga}}</Meta>
+        </MetaData2>
+        <KeyAttribs symantics="${{attribSym}}">
+            <KeyAttrib>
+                <AttribName>Has Mountain</AttribName>
+                <AttribValue></AttribValue>
+            </KeyAttrib>
+            <KeyAttrib>
+                <AttribName>Main Religion</AttribName>
+                <AttribValue>${{religion}}</AttribValue>
+            </KeyAttrib>
+        </KeyAttribs>
+        <Error code="${{errorCode}}">
+            <Message>${{errorMessage}}</Message>
+        </Error>
+    </soap:Body>
+</soap:Envelope>

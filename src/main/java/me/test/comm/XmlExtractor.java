@@ -3,6 +3,8 @@ package me.test.comm;
 import java.util.*;
 import javax.xml.parsers.*;
 import javax.xml.xpath.*;
+
+import me.util.FileReaderUtil;
 import org.w3c.dom.*;
 import java.io.StringReader;
 import org.xml.sax.InputSource;
@@ -20,64 +22,8 @@ public class XmlExtractor {
     private static final String VARIABLE_PATTERN = "\\$\\{\\{([a-zA-Z0-9\\-_]+?)\\}\\}";
 
     public static void test() {
-        String templateXml =
-                "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
-                "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
-                "  <soap:Body>" +
-                "    <CountryCurrency xmlns=\"http://www.oorsprong.org/websamples.countryinfo\" CodeStandard=\"${{countryCodeStandard}}\">" +
-                "      <sCountryISOCode>${{countryCode}}</sCountryISOCode>" +
-                "    </CountryCurrency>" +
-                "    <MetaData>" +
-                "      <Meta attrib=\"City\">${{city}}</Meta>" +
-                "    </MetaData>" +
-                "    <KeyAttribs symantics=\"${{attribSym}}\">" +
-                "      <KeyAttrib>" +
-                "        <AttribName>Has Mountain</AttribName>" +
-                "        <AttribValue></AttribValue>" +
-                "      </KeyAttrib>" +
-                "      <KeyAttrib>" +
-                "        <AttribName>Main Religion</AttribName>" +
-                "        <AttribValue>${{religion}}</AttribValue>" +
-                "      </KeyAttrib>" +
-                "    </KeyAttribs>" +
-                "    <Error code=\"${{errorCode}}\">" +
-                "      <Message>${{errorMessage}}</Message>" +
-                "    </Error>" +
-                "  </soap:Body>" +
-                "</soap:Envelope>";
-
-        String actualXml =
-                "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
-                "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">" +
-                "  <soap:Body>" +
-                "    <CountryCurrency xmlns=\"http://www.oorsprong.org/websamples.countryinfo\"  CodeStandard=\"ISO 83\">" +
-                "      <sCountryISOCode>US</sCountryISOCode>" +
-                "    </CountryCurrency>" +
-                "    <MetaData>" +
-                "      <Meta attrib=\"Country\">Bangladesh</Meta>" +
-                "      <Meta attrib=\"City\">Dhaka</Meta>" +
-                "      <Meta attrib=\"Language\">Bangla</Meta>" +
-                "    </MetaData>" +
-                "    <KeyAttribs>" +
-                "      <KeyAttrib>" +
-                "        <AttribName>Population</AttribName>" +
-                "        <AttribValue>20,25,36,896</AttribValue>" +
-                "      </KeyAttrib>" +
-                "      <KeyAttrib>" +
-                "        <AttribName>Main Religion</AttribName>" +
-                "        <AttribValue>Islam</AttribValue>" +
-                "      </KeyAttrib>" +
-                "      <KeyAttrib>" +
-                "        <AttribName>Has Mountain</AttribName>" +
-                "        <AttribValue>false</AttribValue>" +
-                "      </KeyAttrib>" +
-                "      <KeyAttrib>" +
-                "        <AttribName unit=\"sq. KM\">Area</AttribName>" +
-                "        <AttribValue>1,44,000</AttribValue>" +
-                "      </KeyAttrib>" +
-                "    </KeyAttribs>" +
-                "  </soap:Body>" +
-                "</soap:Envelope>";
+        String templateXml = FileReaderUtil.readFileFromResources("templates/template.xml");
+        String actualXml = FileReaderUtil.readFileFromResources("templates/original.xml");
 
         XmlExtractor extractor = new XmlExtractor();
         Map<String, String> result = null;
@@ -306,7 +252,7 @@ public class XmlExtractor {
         return xpath;
     }*/
 
-    private String getSiblingCondition(Node templateNode, String currentXPath, Document templateDoc, Document actualDoc, XPath xpath) throws Exception {
+    /*private String getSiblingCondition(Node templateNode, String currentXPath, Document templateDoc, Document actualDoc, XPath xpath) throws Exception {
         int idx = getIndexForElement(templateNode);
         String parentXPath = getParentXPath(currentXPath);
         String parentXPathWithIdx = parentXPath + "[" + idx + "]";
@@ -409,6 +355,97 @@ public class XmlExtractor {
     private String getParentXPath(String childXPath) {
         int lastSeparatorIdx = childXPath.lastIndexOf('/');
         return lastSeparatorIdx<0 ? childXPath : childXPath.substring(0, lastSeparatorIdx);
+    }*/
+
+    private String getSiblingCondition(Node templateNode, String currentXPath, Document templateDoc, Document actualDoc, XPath xpath) throws Exception {
+        int idx = getIndexForElement(templateNode);
+        String parentXPath = getParentXPath(currentXPath);
+        String parentXPathWithIdx = parentXPath + "[" + idx + "]";
+
+        Node parent = getNodeFromXPath(templateDoc, parentXPathWithIdx, xpath);
+        if (parent == null || !(parent instanceof Element)) {
+            return null;
+        }
+
+        Map<String, String> parentXqueryMap = getNodeConditionMap(parent);
+        Map<String, String> nodeXqueryMap = getNodeConditionMap(templateNode);
+
+        // Construct query based on sibling and node attributes
+        String nodeAttrQry = buildConditionString(nodeXqueryMap);
+
+        String condition = null;
+        if (!parentXqueryMap.isEmpty()) {
+            String parentCondition = buildConditionString(parentXqueryMap);
+            condition = parentXPath + parentCondition + "/" + templateNode.getNodeName() + nodeAttrQry;
+        } else if (!nodeXqueryMap.isEmpty()) {
+            condition = currentXPath + nodeAttrQry;
+        }
+
+        System.out.println(condition);
+        return condition;
+    }
+
+    private int getIndexForElement(Node elem) {
+        int index = 0; // XPath is 1 based index
+        NodeList siblings = elem.getParentNode().getChildNodes(); // Correct: Use direct parent
+
+        for (int i = 0; i < siblings.getLength(); i++) {
+            Node node = siblings.item(i);
+            if (node.getNodeType() == Node.ELEMENT_NODE && node.getNodeName().equals(elem.getNodeName())) {
+                index++;
+                if (node.isSameNode(elem)) {
+                    return index; // Return 1-based index
+                }
+            }
+        }
+
+        return -1; // -1 indicates that the element is not found
+    }
+
+    private String getParentXPath(String childXPath) {
+        int lastSeparatorIdx = childXPath.lastIndexOf('/');
+        return lastSeparatorIdx < 0 ? childXPath : childXPath.substring(0, lastSeparatorIdx);
+    }
+
+    private Node getNodeFromXPath(Document doc, String xpathExpression, XPath xpath) throws Exception {
+        XPathExpression expr = xpath.compile(xpathExpression);
+        return (Node) expr.evaluate(doc, XPathConstants.NODE);
+    }
+
+    private Map<String, String> getNodeConditionMap(Node node) {
+        Map<String, String> conditionMap = new HashMap<>();
+        if (node.getNodeType() == Node.ELEMENT_NODE) {
+            // Collect child element values
+            NodeList children = node.getChildNodes();
+            for (int i = 0; i < children.getLength(); i++) {
+                Node child = children.item(i);
+                if (child.getNodeType() == Node.ELEMENT_NODE && !child.getTextContent().trim().isEmpty()) {
+                    conditionMap.put(child.getNodeName(), child.getTextContent().trim());
+                }
+            }
+
+            // Collect attributes
+            NamedNodeMap attributes = node.getAttributes();
+            if (attributes != null) {
+                for (int j = 0; j < attributes.getLength(); j++) {
+                    Node attr = attributes.item(j);
+                    conditionMap.put("@" + attr.getNodeName(), attr.getNodeValue());
+                }
+            }
+        }
+
+        return conditionMap;
+    }
+
+    private String buildConditionString(Map<String, String> conditionMap) {
+        StringBuilder condition = new StringBuilder();
+        for (Map.Entry<String, String> entry : conditionMap.entrySet()) {
+            if(!isVariable(entry.getValue().trim())) {
+                condition.append("[").append(entry.getKey().trim()).append("='").append(entry.getValue().trim()).append("']");
+            }
+        }
+
+        return condition.toString();
     }
 
     private boolean isVariable(String value) {
@@ -419,11 +456,11 @@ public class XmlExtractor {
         return value.replaceAll("\\$\\{\\{", "").replaceAll("\\}\\}", "");
     }
 
-    private Node getNodeFromXPath(Document doc, String xpathExpression, XPath xpath) throws Exception {
+/*    private Node getNodeFromXPath(Document doc, String xpathExpression, XPath xpath) throws Exception {
         XPathExpression expr = xpath.compile(xpathExpression);
         Node node = (Node) expr.evaluate(doc, XPathConstants.NODE);
         return node;
-    }
+    }*/
 
     private String evaluateXPath(Document doc, String xpathExpression, XPath xpath) throws Exception {
         Node resultNode = getNodeFromXPath(doc, xpathExpression, xpath);
@@ -431,4 +468,33 @@ public class XmlExtractor {
 //        System.out.println("XPath: [" + xpath + "] ==> Expr: [" + xpathExpression + "]");
         return s;
     }
+
+
+    // This function determines whether the xml array is an array of elements or objects. True for leaf, false for object.
+    // true -> <MetaData><Meta attrib="Country">Bangladesh</Meta><Meta attrib="City">Dhaka</Meta></MetaData>
+    // false -> <KeyAttribs><KeyAttrib><AttribName>Has Mountain</AttribName><AttribValue>false</AttribValue></KeyAttrib>
+    //              <KeyAttrib><AttribName>Area</AttribName><AttribValue>1,44,000</AttribValue></KeyAttrib></KeyAttribs>
+    private boolean isArrayAsElement(Node node) {
+        if (node == null || node.getParentNode() == null) {
+            return false; // If node or parent is null, no siblings exist
+        }
+
+        Node parent = node.getParentNode();
+        NodeList siblings = parent.getChildNodes();
+        String nodeName = node.getNodeName();
+
+        int sameNameCount = 0;
+
+        // Iterate through siblings
+        for (int i = 0; i < siblings.getLength(); i++) {
+            Node sibling = siblings.item(i);
+            if (sibling.getNodeType() == Node.ELEMENT_NODE && sibling.getNodeName().equals(nodeName)) {
+                sameNameCount++;
+            }
+        }
+
+        // If count is greater than 1, the node has siblings with the same name
+        return sameNameCount > 1;
+    }
+
 }

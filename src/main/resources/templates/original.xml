@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+    <soap:Body>
+        <CountryCurrency xmlns="http://www.oorsprong.org/websamples.countryinfo"  CodeStandard="ISO 83">
+            <sCountryISOCode>US</sCountryISOCode>
+        </CountryCurrency>
+        <MetaData>
+            <Meta attrib="Country">Bangladesh</Meta>
+            <Meta attrib="City">Dhaka</Meta>
+            <Meta attrib="Language">Bangla</Meta>
+        </MetaData>
+        <MetaData2>
+            <Meta attrib="Country">Bangladesh2</Meta>
+            <Meta attrib="City">Dhaka2</Meta>
+            <Meta attrib="Language">Bangla2</Meta>
+        </MetaData2>
+        <KeyAttribs>
+            <KeyAttrib>
+                <AttribName>Has Mountain</AttribName>
+                <AttribValue>false</AttribValue>
+            </KeyAttrib>
+            <KeyAttrib>
+                <AttribName unit="sq. KM">Area</AttribName>
+                <AttribValue>1,44,000</AttribValue>
+            </KeyAttrib>
+            <KeyAttrib>
+                <AttribName>Main Religion</AttribName>
+                <AttribValue>Islam</AttribValue>
+            </KeyAttrib>
+            <KeyAttrib>
+                <AttribName>Population</AttribName>
+                <AttribValue>20,25,36,896</AttribValue>
+            </KeyAttrib>
+        </KeyAttribs>
+    </soap:Body>
+</soap:Envelope>

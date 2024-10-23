@@ -1,7 +1,5 @@
 import me.test.*;
-import me.test.comm.RestTest;
-import me.test.comm.SoapTest;
-import me.test.comm.XmlExtractor;
+import me.test.comm.*;
 
 
 public class Main {
@@ -42,9 +40,7 @@ public class Main {
 
 //        SoapTest.test();
 //        RestTest.test();
-
-        XmlExtractor.test();
-
+//        XmlExtractor.test();
+        XPathGenerator.test();
     }
-
 }
