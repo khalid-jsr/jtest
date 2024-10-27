@@ -1,4 +1,3 @@
-import me.test.*;
 import me.test.comm.*;
 
 
@@ -41,6 +40,7 @@ public class Main {
 //        SoapTest.test();
 //        RestTest.test();
 //        XmlExtractor.test();
-        XPathGenerator.test();
+//        XPathGenerator.test();
+        TemplateAnalyzer.test();
     }
 }

@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
     <soap:Body>
-        <CountryCurrency CodeStandard="${{ISO X}}">
-            <sCountryISOCode checkHere="${{false for X}}">${{X}}</sCountryISOCode>
+        <CountryCurrency CodeStandard="ISO X">
+            <sCountryISOCode checkHere="False for X">My X</sCountryISOCode>
         </CountryCurrency>
         <CountryCurrency xmlns="http://c.com"  CodeStandard="ISO C">
             <sCountryISOCode>C</sCountryISOCode>
         </CountryCurrency>
-        <CountryCurrency xmlns="http://a.com" CodeStandard="${{ISO A}}">
+        <CountryCurrency xmlns="http://a.com" CodeStandard="ISO A">
             <sCountryISOCode>
                 <otherAttrib>Other Attribute</otherAttrib>
-                <innerElem>${{Inner Element}}</innerElem>
+                <innerElem>Inner Element</innerElem>
             </sCountryISOCode>
         </CountryCurrency>
         <CountryCurrency xmlns="http://b.com"  CodeStandard="ISO B">
-            <sCountryISOCode checkHere="true for B">${{B}}</sCountryISOCode>
+            <sCountryISOCode checkHere="true for B">Your B</sCountryISOCode>
         </CountryCurrency>
         <nestedComplex xmlns="http://comp-1.com">
             <nextStep>
                 <newPrefix xmlns="http://comp-222.com">
-                    <finalStep>${{Nested Element with multiple default prefix}}</finalStep>
+                    <finalStep>Nested Default</finalStep>
                 </newPrefix>
             </nextStep>
         </nestedComplex>
         <nc2:nestedComplex2 xmlns:nc2="http://comp-nc2.com">
             <nextStep>
                 <newPrefix xmlns="http://comp-nc2-222.com">
-                    <finalStep>${{Nested Element with NAMED multiple default prefix}}</finalStep>
+                    <finalStep>Nested NAMED</finalStep>
                 </newPrefix>
             </nextStep>
         </nc2:nestedComplex2>

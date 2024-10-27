@@ -163,11 +163,21 @@ public class XPathGenerator {
     private Map<String, String> discoverNamespaces(Document doc) {
         Map<String, String> namespaces = new HashMap<>();
 //        traverseAndCollectNamespaces(doc.getDocumentElement(), namespaces);
-        namespaces.put("soap","http://schemas.xmlsoap.org/soap/envelope/");
-        namespaces.put("a","http://www.oorsprong.org/websamples.countryinfo");
-        namespaces.put("b","http://www.oorsprong.org/websamples.com");
-        namespaces.put("c","http://www.oorsprong.org/websamples.net");
+        /*namespaces.put("soap","http://schemas.xmlsoap.org/soap/envelope/");
+        namespaces.put("a","http://a.com");
+        namespaces.put("b","http://b.com");
+        namespaces.put("c","http://c.com");
+        namespaces.put("httpcomp1com", "http://comp-1.com");
+        namespaces.put("httpcomp222com","http://comp-222.com");*/
 
+        namespaces.put("httpbcom", "http://b.com");
+        namespaces.put("httpcompnc2222com", "http://comp-nc2-222.com");
+        namespaces.put("httpcomp222com", "http://comp-222.com");
+        namespaces.put("httpcomp1com", "http://comp-1.com");
+        namespaces.put("nc2", "http://comp-nc2.com");
+        namespaces.put("soap", "http://schemas.xmlsoap.org/soap/envelope/");
+        namespaces.put("httpccom", "http://c.com");
+        namespaces.put("httpacom", "http://a.com");
 
         return namespaces;
     }
@@ -212,10 +222,29 @@ public class XPathGenerator {
         XPathGenerator generator = new XPathGenerator();
         try {
 //            result = generator.generateXPathMap(templateXml);
-            result.put("a", "/soap:Envelope/soap:Body/a:CountryCurrency/a:sCountryISOCode");
-            result.put("b", "/soap:Envelope/soap:Body/b:CountryCurrency/b:sCountryISOCode");
-            result.put("c", "/soap:Envelope/soap:Body/c:CountryCurrency/c:sCountryISOCode");
-            result.put("x", "/soap:Envelope/soap:Body/CountryCurrency/sCountryISOCode");
+//            result.put("a", "/soap:Envelope/soap:Body/a:CountryCurrency/a:sCountryISOCode");
+//            result.put("b", "/soap:Envelope/soap:Body/b:CountryCurrency/b:sCountryISOCode");
+//            result.put("c", "/soap:Envelope/soap:Body/c:CountryCurrency/c:sCountryISOCode");
+//            result.put("x", "/soap:Envelope/soap:Body/CountryCurrency/sCountryISOCode");
+//            result.put("bAttrib", "/soap:Envelope/soap:Body/b:CountryCurrency/@CodeStandard");
+//            result.put("xAttrib", "/soap:Envelope/soap:Body/CountryCurrency/@CodeStandard");
+
+//            result.put("aInnerElem", "/soap:Envelope/soap:Body/a:CountryCurrency/a:sCountryISOCode[a:otherAttrib='Other Attribute']/a:innerElem");
+//            result.put("nested", "/soap:Envelope/soap:Body/httpcomp1com:nestedComplex/httpcomp1com:nextStep/httpcomp222com:newPrefix/httpcomp222com:finalStep");
+
+//            result.put("bChildAttrib_v1", "/soap:Envelope/soap:Body/b:CountryCurrency/b:sCountryISOCode/@checkHere");
+//            result.put("bChildAttrib_v2", "/soap:Envelope/soap:Body/b:CountryCurrency[@CodeStandard='ISO B']/b:sCountryISOCode/@checkHere");
+//            result.put("xChildAttrib_v1", "/soap:Envelope/soap:Body/CountryCurrency/sCountryISOCode/@checkHere");
+//            result.put("xChildAttrib_v2", "/soap:Envelope/soap:Body/CountryCurrency[@CodeStandard='ISO X']/sCountryISOCode/@checkHere");
+
+            result.put("B", "/soap:Envelope/soap:Body/httpbcom:CountryCurrency[@CodeStandard='ISO B']/httpbcom:sCountryISOCode[@checkHere='true for B']");
+            result.put("ISO X", "/soap:Envelope/soap:Body/CountryCurrency/@CodeStandard");
+            result.put("X", "/soap:Envelope/soap:Body/CountryCurrency/sCountryISOCode");
+            result.put("Inner Element", "/soap:Envelope/soap:Body/httpacom:CountryCurrency/httpacom:sCountryISOCode/httpacom:innerElem");
+            result.put("Nested Element with NAMED multiple default prefix", "/soap:Envelope/soap:Body/nc2:nestedComplex2/nextStep/httpcompnc2222com:newPrefix/httpcompnc2222com:finalStep");
+            result.put("ISO A", "/soap:Envelope/soap:Body/httpacom:CountryCurrency/@CodeStandard");
+            result.put("Nested Element with multiple default prefix", "/soap:Envelope/soap:Body/httpcomp1com:nestedComplex/httpcomp1com:nextStep/httpcomp222com:newPrefix/httpcomp222com:finalStep");
+            result.put("false for X", "/soap:Envelope/soap:Body/CountryCurrency/sCountryISOCode/@checkHere");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -230,7 +259,7 @@ public class XPathGenerator {
             } catch (Exception e) {
                 throw new RuntimeException(e);
             }
-            System.out.println(var + ": [" + theValue + "] => |" + v + "|");
+            System.out.println( "["+ var.equals(extractVariableName(theValue)) + "]: " + var + ": [" + theValue + "] => |" + v + "|");
 //            System.out.println(var + ": [" + theValue + "]");
 //            System.out.println(var + ": [" + v + "]");
         }
