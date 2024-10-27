@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+    <soap:Body>
+        <CountryCurrency CodeStandard="ISO 85">
+            <sCountryISOCode>X</sCountryISOCode>
+        </CountryCurrency>
+        <CountryCurrency xmlns="http://www.oorsprong.org/websamples.countryinfo"  CodeStandard="ISO A">
+            <sCountryISOCode>A</sCountryISOCode>
+        </CountryCurrency>
+        <CountryCurrency xmlns="http://www.oorsprong.org/websamples.com"  CodeStandard="ISO B">
+            <sCountryISOCode>B</sCountryISOCode>
+        </CountryCurrency>
+        <CountryCurrency xmlns="http://www.oorsprong.org/websamples.net"  CodeStandard="ISO C">
+            <sCountryISOCode>C</sCountryISOCode>
+        </CountryCurrency>
+    </soap:Body>
+</soap:Envelope>
