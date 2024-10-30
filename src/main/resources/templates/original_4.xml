@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <soap:Header>
+    <auth:Authentication xmlns:auth="http://www.example.com/auth">
+      <auth:Token isEncrypted="false">abcd1234</auth:Token>
+      <auth:User>
+        <auth:Name>John Doe</auth:Name>
+        <auth:Roles>
+          <auth:Role>Admin</auth:Role>
+          <auth:Role>User</auth:Role>
+        </auth:Roles>
+      </auth:User>
+    </auth:Authentication>
+  </soap:Header>
+  <soap:Body>
+    <service:Response xmlns:service="http://www.example.com/service" xmlns:format="http://www.example.com/format" xmlns="http://www.example.com/default">
+      <service:Status>Success</service:Status>
+      <service:Data>
+        <service:Item id="1">
+          <service:Name>Item One</service:Name>
+          <service:Description>This is the first item.</service:Description>
+          <Price currency="USD">100.00</Price>
+          <Attributes>
+            <Color>Red</Color>
+            <Size>Medium</Size>
+          </Attributes>
+        </service:Item>
+        <Item id="2">
+          <Name>Item Two</Name>
+          <Description>This is the second item.</Description>
+          <Price currency="EUR">80.00</Price>
+          <Attributes>
+            <Color>Blue</Color>
+            <Size>Large</Size>
+          </Attributes>
+          <Item id="3">
+            <Name>Item Three</Name>
+            <Description>This is the third item.</Description>
+            <Price currency="INR">23.32</Price>
+            <Attributes>
+              <Color>Cyan</Color>
+              <Size>Medium</Size>
+            </Attributes>
+          </Item>
+        </Item>
+        <misc:Extra xmlns:misc="http://www.example.com/misc">
+          <misc:Info>Additional information</misc:Info>
+        </misc:Extra>
+      </service:Data>
+      <MetaTags>
+        <Meta Tag="City">Dhaka</Meta>
+        <Meta Tag="Area">Kalabagan</Meta>
+        <Meta Tag="Zip">1000</Meta>
+      </MetaTags>
+      <MetaTags2 xmlns:misc="http://www.example.com/meta">
+        <Meta Tag="Customer">Abul Khan</Meta>
+        <Meta Tag="Regular User">false</Meta>
+        <Meta Tag="Previous Purchase Date">2024-05-10</Meta>
+      </MetaTags2>
+      <Notes xmlns="http://www.example.com/notes">
+        <Note>First note with default namespace.</Note>
+        <Note>Second note with default namespace.</Note>
+      </Notes>
+    </service:Response>
+  </soap:Body>
+</soap:Envelope>

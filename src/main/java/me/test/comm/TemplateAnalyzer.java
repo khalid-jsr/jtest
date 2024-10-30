@@ -163,8 +163,12 @@ public class TemplateAnalyzer {
     }
 
     public static void test() {
-        String template = FileReaderUtil.readFileFromResources("templates/template_3.xml");
-        String original = FileReaderUtil.readFileFromResources("templates/original_3.xml");
+//        String template = FileReaderUtil.readFileFromResources("templates/template_3.xml");
+//        String original = FileReaderUtil.readFileFromResources("templates/original_3.xml");
+
+        String template = FileReaderUtil.readFileFromResources("templates/template_4.xml");
+        String original = FileReaderUtil.readFileFromResources("templates/original_4.xml");
+
         Map<String, String> keyVal = new HashMap<>();
 
         TemplateAnalyzer analyzer = new TemplateAnalyzer();

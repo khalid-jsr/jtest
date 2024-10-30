@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
+  <soap:Header>
+    <auth:Authentication xmlns:auth="http://www.example.com/auth">
+      <auth:Token isEncrypted="${{isEncrypted}}">${{token}}</auth:Token>
+      <auth:User>
+        <auth:Name>${{username}}</auth:Name>
+        <auth:IsSystemUser>${{IsSystemUser}}</auth:IsSystemUser>
+        <auth:Roles>
+          <auth:Role>Admin</auth:Role>
+          <auth:Role>User</auth:Role>
+        </auth:Roles>
+      </auth:User>
+    </auth:Authentication>
+  </soap:Header>
+  <soap:Body>
+    <service:Response xmlns:service="http://www.example.com/service" xmlns="http://www.example.com/default">
+      <service:Status>${{ServiceStatus}}</service:Status>
+      <service:Data>
+        <service:Item id="1">
+          <service:Name>${{ItemName1}}</service:Name>
+          <service:Description>This is the first item.</service:Description>
+          <Price currency="${{Item1Currency}}">100.00</Price>
+          <Attributes>
+            <Color>Red</Color>
+            <Size>${{size1}}</Size>
+          </Attributes>
+        </service:Item>
+        <Item id="3">
+          <Name>${{ItemName3}}</Name>
+          <Attributes>
+            <Color>${{color3}}</Color>
+            <Size>Large</Size>
+          </Attributes>
+        </Item>
+        <misc:Extra xmlns:misc="http://www.example.com/misc">
+          <misc:ReferenceID>${{ReferenceID}}</misc:ReferenceID>
+        </misc:Extra>
+      </service:Data>
+      <MetaTags>
+        <Meta Tag="Area">${{area}}</Meta>
+      </MetaTags>
+      <MetaTags2 xmlns:misc="http://www.example.com/meta">
+        <Meta Tag="Customer">Kabul Mia</Meta>
+        <Meta Tag="Previous Purchase Date">${{PrevPurchaseDate}}</Meta>
+      </MetaTags2>
+    </service:Response>
+  </soap:Body>
+</soap:Envelope>
