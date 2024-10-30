@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
-  <soap:Header>
-    <auth:Authentication xmlns:auth="http://www.example.com/auth">
-      <auth:Token isEncrypted="encryption: false">token-abcd1234</auth:Token>
-      <auth:User>
-        <auth:Name>User: John Doe</auth:Name>
-        <auth:Roles>
-          <auth:Role>Admin</auth:Role>
-          <auth:Role>User</auth:Role>
-        </auth:Roles>
-      </auth:User>
-    </auth:Authentication>
-  </soap:Header>
-  <soap:Body>
-    <service:Response xmlns:service="http://www.example.com/service" xmlns:format="http://www.example.com/format" xmlns="http://www.example.com/default">
-      <service:Status>Status: Success</service:Status>
-      <service:Data>
-        <service:Item id="1">
-          <service:Name>Item One</service:Name>
-          <service:Description>This is the first item.</service:Description>
+<Envelope>
+  <Header>
+    <Authentication>
+      <Token isEncrypted="encryption: false">token-abcd1234</Token>
+      <User>
+        <Name>User: John Doe</Name>
+        <Roles>
+          <Role>Admin</Role>
+          <Role>User</Role>
+        </Roles>
+      </User>
+    </Authentication>
+  </Header>
+  <Body>
+    <Response>
+      <Status>Status: Success</Status>
+      <Data>
+        <Item id="1">
+          <Name>Item One</Name>
+          <Description>This is the first item.</Description>
           <Price currency="Item1 - USD">100.00</Price>
           <Attributes>
             <Color>Red</Color>
             <Size>Item1: Medium</Size>
           </Attributes>
-        </service:Item>
+        </Item>
         <Item id="2">
           <Name>Item Two</Name>
           <Description>This is the second item.</Description>
@@ -44,7 +44,7 @@
               <Size>Medium</Size>
             </Attribute>
             <Attribute>
-              <Color>Blue</Color>
+              <Color>Blue 3</Color>
               <Size>Large</Size>
             </Attribute>
             <Attribute>
@@ -53,24 +53,24 @@
             </Attribute>
           </Attributes>
         </Item>
-        <misc:Extra xmlns:misc="http://www.example.com/misc">
-          <misc:Info>Additional information</misc:Info>
-        </misc:Extra>
-      </service:Data>
+        <Extra>
+          <Info>Additional information</Info>
+        </Extra>
+      </Data>
       <MetaTags>
         <Meta Tag="City">Dhaka</Meta>
         <Meta Tag="Area">The Correct Area</Meta>
         <Meta Tag="Zip">1000</Meta>
       </MetaTags>
-      <MetaTags2 xmlns="http://www.example.com/meta">
+      <MetaTags2>
         <Meta Tag="Customer">Abul Khan</Meta>
         <Meta Tag="Regular User">false</Meta>
         <Meta Tag="Previous Purchase Date">2024-05-10</Meta>
       </MetaTags2>
-      <Notes xmlns="http://www.example.com/notes">
+      <Notes>
         <Note>First note with default namespace.</Note>
         <Note>Second note with default namespace.</Note>
       </Notes>
-    </service:Response>
-  </soap:Body>
-</soap:Envelope>
+    </Response>
+  </Body>
+</Envelope>

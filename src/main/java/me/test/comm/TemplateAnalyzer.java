@@ -31,23 +31,22 @@ public class TemplateAnalyzer {
         }
     }
 
+
     private void traverseNode(Node node, String currentXPath, Map<String, String> parentAttributes) {
         if (node.getNodeType() == Node.ELEMENT_NODE) {
             Element element = (Element) node;
-            String prefix = element.getPrefix();
             String localName = element.getLocalName();
             String namespaceURI = element.getNamespaceURI();
 
+            // Add sibling condition if necessary
+            String siblingCondition = generateSiblingCondition(node);
+
             // Register namespace if it exists and isn't already registered
-            if (namespaceURI != null) {
-                String effectivePrefix = (prefix != null && !prefix.isEmpty()) ? prefix : generateNamespacePrefixFromURI(namespaceURI);
-                if (!namespaces.containsKey(effectivePrefix)) {
-                    namespaces.put(effectivePrefix, namespaceURI);
-                }
-                currentXPath += "/" + (effectivePrefix.isEmpty() ? "" : effectivePrefix + ":") + localName;
-            } else {
-                currentXPath += "/" + localName;
+            String effectivePrefix = generateNamespacePrefix(node);
+            if (!effectivePrefix.isEmpty() && !namespaces.containsKey(effectivePrefix.replaceFirst(".$",""))) {
+                namespaces.put(effectivePrefix.replaceFirst(".$",""), namespaceURI);
             }
+            currentXPath += siblingCondition + "/" + effectivePrefix + localName;
 
             // Prepare attributes specific to this element, exclude xmlns attributes
             Map<String, String> elementAttributes = new HashMap<>();
@@ -89,12 +88,49 @@ public class TemplateAnalyzer {
         }
     }
 
+    private String generateSiblingCondition(Node node) {
+        Node parent = node.getParentNode();
+        NodeList siblings = parent.getChildNodes();
+        String nodeName = node.getNodeName();
+        StringBuilder condition = new StringBuilder();
+        Map<String, String> siblingMap = new HashMap<>();
+
+        // Count siblings with the same node name
+        int siblingCount = 0;
+        for (int i = 0; i < siblings.getLength(); i++) {
+            Node sibling = siblings.item(i);
+            String nodeText = sibling.getTextContent().trim();
+            if (isLeafNode(node) && isLeafNode(sibling) && !sibling.getNodeName().equals(nodeName) && !isVariable(nodeText) && !nodeText.isEmpty()) {
+//                siblingMap.put(removePrefix(sibling.getNodeName()), nodeText);
+                siblingMap.put(generateNamespacePrefix(sibling) + sibling.getNodeName(), nodeText);
+            }
+        }
+
+        for(Map.Entry<String, String> entry : siblingMap.entrySet()) {
+            condition.append("[").append(entry.getKey()).append("='").append(entry.getValue()).append("']");
+        }
+
+        return condition.toString();
+    }
+
     private String extractVariableNameFromAttribute(String attributeValue) {
         return attributeValue.substring(attributeValue.indexOf("${{") + 3, attributeValue.indexOf("}}"));
     }
 
-    private String generateNamespacePrefixFromURI(String uri) {
-        return uri.replaceAll("[^a-zA-Z0-9]", "");
+
+    private String generateNamespacePrefix(Node node) {
+        Element element = (Element) node;
+        return generateNamespacePrefix(element.getPrefix(), element.getNamespaceURI());
+    }
+
+    private String generateNamespacePrefix(String prefix, String uri) {
+        String p = null;
+        if (prefix != null && !prefix.isEmpty())
+            p = prefix ;
+        else if (uri != null && !uri.isEmpty())
+            p = uri.replaceAll("[^a-zA-Z0-9]", "");
+
+        return p==null ? "" : (p + ":");
     }
 
     private boolean nodeHasVariable(Node node) {
@@ -162,6 +198,28 @@ public class TemplateAnalyzer {
         return value != null && value.matches(VARIABLE_PATTERN);
     }
 
+    // Helper method to check if a node is a leaf (i.e., has no child elements)
+    private boolean isLeafNode(Node node) {
+        if(node.getNodeType() != Node.ELEMENT_NODE)
+            return false;
+
+        NodeList children = node.getChildNodes();
+        for (int i = 0; i < children.getLength(); i++) {
+            if (children.item(i).getNodeType() == Node.ELEMENT_NODE) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private static String removePrefix(String nodeName) {
+        if(!nodeName.contains(":"))
+            return nodeName;
+
+        return nodeName.split(":")[1];
+    }
+
+
     public static void test() {
 //        String template = FileReaderUtil.readFileFromResources("templates/template_3.xml");
 //        String original = FileReaderUtil.readFileFromResources("templates/original_3.xml");
@@ -173,24 +231,37 @@ public class TemplateAnalyzer {
 
         TemplateAnalyzer analyzer = new TemplateAnalyzer();
         analyzer.analyzeTemplate(template);
-
         /*
-        System.out.println("Namespaces:");
-        for (Map.Entry<String, String> entry : analyzer.getNamespaces().entrySet()) {
-            System.out.println(entry.getKey() + " => " + entry.getValue());
-        }
-
-        System.out.println("\nVariable XPaths:");
-        for (Map.Entry<String, String> entry : analyzer.getVariableXPaths().entrySet()) {
-            System.out.println("result.put(\"" + entry.getKey().replace("\n", " \\n ") + "\", \"" + entry.getValue().replace("\n", " \\n ") + "\");");
-//            System.out.println(entry.getKey().replace("\n", " \\n ") + " => >|" + entry.getValue().replace("\n", " \\n ") + "|<");
-//            System.out.println();
-        }
+        analyzer.namespaces.put("soap", "http://schemas.xmlsoap.org/soap/envelope/");
+        analyzer.namespaces.put("service", "http://www.example.com/service");
+        analyzer.namespaces.put("x", "http://www.example.com/default");
+//        analyzer.variableXPaths.put("color3", "/soap:Envelope/soap:Body/service:Response/service:Data/x:Item[@id='3']/Attributes/Attribute[Size='Large']/Color");
+        analyzer.variableXPaths.put("color3", "/soap:Envelope/soap:Body/service:Response/service:Data/x:Item[@id='3']/x:Attributes/x:Attribute[x:Size='Large']/x:Color");
         */
 
+        int counter = 1;
+        /*System.out.println("Namespaces:");
+        for (Map.Entry<String, String> entry : analyzer.getNamespaces().entrySet()) {
+            System.out.println("" + counter + ". " + entry.getKey() + " => " + entry.getValue());
+            counter++;
+        }*/
+
+        counter = 1;
+        System.out.println("\nVariable XPaths:");
+        for (Map.Entry<String, String> entry : analyzer.getVariableXPaths().entrySet()) {
+//            System.out.println("namespaces.put(\"" + entry.getKey().replace("\n", " \\n ") + "\", \"" + entry.getValue().replace("\n", " \\n ") + "\");");
+            System.out.println("" + counter + ". " + entry.getKey().replace("\n", " \\n ") + " => >|" + entry.getValue().replace("\n", " \\n ") + "|<");
+//            System.out.println();
+            counter++;
+        }
+
+        counter = 1;
+        System.out.println("\nVariables:");
         keyVal = analyzer.extractVariableValuesFromXML(original, analyzer.getNamespaces(), analyzer.getVariableXPaths());
         for (Map.Entry<String, String> entry : keyVal.entrySet()) {
-            System.out.println(entry.getKey() + ": [" + entry.getValue() + "]");
+            if (null != entry.getValue())
+                System.out.println("" + counter + ". " + entry.getKey() + ": [" + entry.getValue() + "]");
+            counter++;
         }
     }
 }

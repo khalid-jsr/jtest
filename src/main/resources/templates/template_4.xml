@@ -5,7 +5,7 @@
       <auth:Token isEncrypted="${{isEncrypted}}">${{token}}</auth:Token>
       <auth:User>
         <auth:Name>${{username}}</auth:Name>
-        <auth:IsSystemUser>${{IsSystemUser}}</auth:IsSystemUser>
+        <auth:IsSystemUser>${{Absent-IsSystemUser}}</auth:IsSystemUser>
         <auth:Roles>
           <auth:Role>Admin</auth:Role>
           <auth:Role>User</auth:Role>
@@ -19,8 +19,8 @@
       <service:Data>
         <service:Item id="1">
           <service:Name>${{ItemName1}}</service:Name>
-          <service:Description>This is the first item.</service:Description>
-          <Price currency="${{Item1Currency}}">100.00</Price>
+          <service:Description/>
+          <Price currency="${{Item1Currency}}"/>
           <Attributes>
             <Color>Red</Color>
             <Size>${{size1}}</Size>
@@ -29,18 +29,24 @@
         <Item id="3">
           <Name>${{ItemName3}}</Name>
           <Attributes>
-            <Color>${{color3}}</Color>
-            <Size>Large</Size>
+            <Attribute>
+              <Color>${{color3}}</Color>
+              <Size>Large</Size>
+            </Attribute>
+            <Attribute>
+              <Fabric>Chiffon</Fabric>
+              <Seamless>true</Seamless>
+            </Attribute>
           </Attributes>
         </Item>
         <misc:Extra xmlns:misc="http://www.example.com/misc">
-          <misc:ReferenceID>${{ReferenceID}}</misc:ReferenceID>
+          <misc:ReferenceID>${{Absent_ReferenceID}}</misc:ReferenceID>
         </misc:Extra>
       </service:Data>
       <MetaTags>
         <Meta Tag="Area">${{area}}</Meta>
       </MetaTags>
-      <MetaTags2 xmlns:misc="http://www.example.com/meta">
+      <MetaTags2 xmlns="http://www.example.com/meta">
         <Meta Tag="Customer">Kabul Mia</Meta>
         <Meta Tag="Previous Purchase Date">${{PrevPurchaseDate}}</Meta>
       </MetaTags2>
