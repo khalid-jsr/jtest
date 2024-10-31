@@ -62,7 +62,7 @@ public class TemplateAnalyzer {
                         // Add variable attribute to variableXPaths map
                         String variableName = extractVariableNameFromAttribute(attrValue);
                         variableXPaths.put(variableName, currentXPath + "/@" + attrName);
-                    } else {
+                    } else if(!attrName.contains(":")) { // skip xsi attributes like xsi:schemaLocation or xsi:nil
                         // Add other non-variable attributes to the element's attribute map
                         elementAttributes.put(attrName, attrValue);
                     }
@@ -224,13 +224,15 @@ public class TemplateAnalyzer {
 //        String template = FileReaderUtil.readFileFromResources("templates/template_3.xml");
 //        String original = FileReaderUtil.readFileFromResources("templates/original_3.xml");
 
-        String template = FileReaderUtil.readFileFromResources("templates/template_4.xml");
-        String original = FileReaderUtil.readFileFromResources("templates/original_4.xml");
+        String template = FileReaderUtil.readFileFromResources("templates/template_5.xml");
+        String original = FileReaderUtil.readFileFromResources("templates/original_5.xml");
 
         Map<String, String> keyVal = new HashMap<>();
 
         TemplateAnalyzer analyzer = new TemplateAnalyzer();
         analyzer.analyzeTemplate(template);
+        int counter = 0;
+
         /*
         analyzer.namespaces.put("soap", "http://schemas.xmlsoap.org/soap/envelope/");
         analyzer.namespaces.put("service", "http://www.example.com/service");
@@ -239,27 +241,35 @@ public class TemplateAnalyzer {
         analyzer.variableXPaths.put("color3", "/soap:Envelope/soap:Body/service:Response/service:Data/x:Item[@id='3']/x:Attributes/x:Attribute[x:Size='Large']/x:Color");
         */
 
-        int counter = 1;
         /*System.out.println("Namespaces:");
+        counter = 1;
         for (Map.Entry<String, String> entry : analyzer.getNamespaces().entrySet()) {
             System.out.println("" + counter + ". " + entry.getKey() + " => " + entry.getValue());
             counter++;
         }*/
 
+        /*System.out.println("\nVariable XPaths:");
         counter = 1;
-        System.out.println("\nVariable XPaths:");
         for (Map.Entry<String, String> entry : analyzer.getVariableXPaths().entrySet()) {
 //            System.out.println("namespaces.put(\"" + entry.getKey().replace("\n", " \\n ") + "\", \"" + entry.getValue().replace("\n", " \\n ") + "\");");
             System.out.println("" + counter + ". " + entry.getKey().replace("\n", " \\n ") + " => >|" + entry.getValue().replace("\n", " \\n ") + "|<");
 //            System.out.println();
             counter++;
-        }
+        }*/
 
-        counter = 1;
-        System.out.println("\nVariables:");
         keyVal = analyzer.extractVariableValuesFromXML(original, analyzer.getNamespaces(), analyzer.getVariableXPaths());
+        System.out.println("\nVariables with values:");
+        counter = 1;
         for (Map.Entry<String, String> entry : keyVal.entrySet()) {
             if (null != entry.getValue())
+                System.out.println("" + counter + ". " + entry.getKey() + ": [" + entry.getValue() + "]");
+            counter++;
+        }
+
+        System.out.println("\nVariables NOT found:");
+        counter = 1;
+        for (Map.Entry<String, String> entry : keyVal.entrySet()) {
+            if (null == entry.getValue())
                 System.out.println("" + counter + ". " + entry.getKey() + ": [" + entry.getValue() + "]");
             counter++;
         }

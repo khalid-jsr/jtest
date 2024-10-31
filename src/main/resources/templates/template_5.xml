@@ -1,0 +1,62 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<bookstore xmlns:bk="http://www.example.com/bookstore"
+           xmlns:mg="http://www.example.com/magazine"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://www.example.com/bookstore bookstore.xsd"
+           IsSuccessful="${{TxnSuccessful}}"
+           Error="${{error}}">
+
+  <bk:book>
+    <title>${{BookTitle}}</title>
+    <!-- Promo IsPaid="${{PaidForPromo}}"/ -->
+    <bk:author/>
+    <bk:price currency="USD"/>
+    <bk:price currency="BDT">${{BookPrice}}</bk:price>
+    <bk:genre>${{BookGenre}}</bk:genre>
+    <bk:publish_date year="${{BookPublishYear}}">${{BookPublishDate}}</bk:publish_date>
+    <bk:metadata>
+      <key>ISBN</key>
+      <value>0-545-13624-X</value>
+    </bk:metadata>
+    <bk:metadata>
+      <key>Country</key>
+      <value>${{BookCountry}}</value>
+    </bk:metadata>
+
+    <bk:reviews>
+      <review>
+        <reviewer>Alice</reviewer>
+        <rating>5</rating>
+        <comment>A magical read!</comment>
+      </review>
+      <review>
+        <reviewer>Bob</reviewer>
+        <rating>4</rating>
+        <comment>A bit predictable, but still enjoyable.</comment>
+      </review>
+    </bk:reviews>
+    <bk:elements>
+      <element attribute="genre">Fantasy</element>
+      <element attribute="ageGroup">Children</element>
+      <element attribute="language">English</element>
+    </bk:elements>
+  </bk:book>
+
+  <mg:magazine id="${{MagazineID}}">
+    <title>National Geographic</title>
+    <mg:issue_number>12</mg:issue_number>
+    <publish_date>2023-12-01</publish_date>
+    <mg:articles>
+      <article>
+        <title>The Wonders of the Amazon</title>
+        <author>Jane Smith</author>
+        <page_number>34</page_number>
+      </article>
+      <article>
+        <title>Climate Change and Its Impact</title>
+        <author>John Doe</author>
+        <page_number>56</page_number>
+      </article>
+    </mg:articles>
+  </mg:magazine>
+</bookstore>
