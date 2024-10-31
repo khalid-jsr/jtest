@@ -15,6 +15,7 @@ import java.util.Map;
 public class TemplateAnalyzer {
     private final Map<String, String> namespaces = new HashMap<>();
     private final Map<String, String> variableXPaths = new HashMap<>();
+    private final static String ATTRIBUTE_NAME_PATTERN = ".*[^a-zA-Z0-9_\\-\\.]+.*";
 
     private void analyzeTemplate(String xmlTemplate) {
         try {
@@ -62,7 +63,11 @@ public class TemplateAnalyzer {
                         // Add variable attribute to variableXPaths map
                         String variableName = extractVariableNameFromAttribute(attrValue);
                         variableXPaths.put(variableName, currentXPath + "/@" + attrName);
-                    } else if(!attrName.contains(":")) { // skip xsi attributes like xsi:schemaLocation or xsi:nil
+//                    } else if(!attrName.contains(":")) { // skip xsi attributes like xsi:schemaLocation or xsi:nil
+                    }
+                    // skip xsi attributes like xsi:schemaLocation or xsi:nil
+                    // Allowed: letters, digits, hyphens, underscores, and periods
+                    else if(!attrName.matches(ATTRIBUTE_NAME_PATTERN)) {
                         // Add other non-variable attributes to the element's attribute map
                         elementAttributes.put(attrName, attrValue);
                     }
@@ -102,7 +107,7 @@ public class TemplateAnalyzer {
             String nodeText = sibling.getTextContent().trim();
             if (isLeafNode(node) && isLeafNode(sibling) && !sibling.getNodeName().equals(nodeName) && !isVariable(nodeText) && !nodeText.isEmpty()) {
 //                siblingMap.put(removePrefix(sibling.getNodeName()), nodeText);
-                siblingMap.put(generateNamespacePrefix(sibling) + sibling.getNodeName(), nodeText);
+                siblingMap.put(generateNamespacePrefix(sibling) + sibling.getLocalName(), nodeText);
             }
         }
 

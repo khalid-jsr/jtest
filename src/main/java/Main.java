@@ -1,3 +1,4 @@
+import me.test.*;
 import me.test.comm.*;
 
 
@@ -42,5 +43,7 @@ public class Main {
 //        XmlExtractor.test();
 //        XPathGenerator.test();
         TemplateAnalyzer.test();
+
+//        RegexTest.test();
     }
 }

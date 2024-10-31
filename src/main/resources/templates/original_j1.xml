@@ -1,0 +1,75 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:web="http://www.example.com/webservice">
+    <soapenv:Header>
+        <web:AuthHeader>
+            <web:Username>testUser</web:Username>
+            <web:Password>testPass123</web:Password>
+            <web:Token>ABC1234567890TOKEN</web:Token>
+        </web:AuthHeader>
+    </soapenv:Header>
+    <soapenv:Body>
+        <web:ProcessRequest>
+            <web:RequestInfo>
+                <web:RequestID>REQ123456</web:RequestID>
+                <web:Timestamp>2024-10-31T13:45:00Z</web:Timestamp>
+                <web:RequestType>ComplexTypeTest</web:RequestType>
+            </web:RequestInfo>
+            <web:Customer>
+                <web:CustomerID>12345</web:CustomerID>
+                <web:Name>
+                    <web:FirstName>John</web:FirstName>
+                    <web:LastName>Doe</web:LastName>
+                </web:Name>
+                <web:ContactInfo>
+                    <web:Phone>+1234567890</web:Phone>
+                    <web:Email>john.doe@example.com</web:Email>
+                    <web:Address>
+                        <web:Street>Main Street 123</web:Street>
+                        <web:City>Sample City</web:City>
+                        <web:State>CA</web:State>
+                        <web:PostalCode>12345</web:PostalCode>
+                    </web:Address>
+                </web:ContactInfo>
+            </web:Customer>
+            <web:Order>
+                <web:OrderID>ORDER7890</web:OrderID>
+                <web:OrderDate>2024-10-30T10:00:00Z</web:OrderDate>
+                <web:Items>
+                    <web:Item>
+                        <web:ItemID>ITEM001</web:ItemID>
+                        <web:Description>Sample Item 1</web:Description>
+                        <web:Quantity>2</web:Quantity>
+                        <web:UnitPrice>49.99</web:UnitPrice>
+                        <web:TotalPrice>99.98</web:TotalPrice>
+                    </web:Item>
+                    <web:Item>
+                        <web:ItemID>ITEM002</web:ItemID>
+                        <web:Description>Sample Item 2</web:Description>
+                        <web:Quantity>1</web:Quantity>
+                        <web:UnitPrice>19.99</web:UnitPrice>
+                        <web:TotalPrice>19.99</web:TotalPrice>
+                    </web:Item>
+                </web:Items>
+                <web:TotalAmount>119.97</web:TotalAmount>
+            </web:Order>
+            <web:Shipping>
+                <web:Method>Standard</web:Method>
+                <web:Cost>5.99</web:Cost>
+                <web:EstimatedDelivery>2024-11-05</web:EstimatedDelivery>
+            </web:Shipping>
+            <web:Payment>
+                <web:PaymentMethod>CreditCard</web:PaymentMethod>
+                <web:CardInfo>
+                    <web:CardNumber>4111111111111111</web:CardNumber>
+                    <web:ExpiryDate>12/25</web:ExpiryDate>
+                    <web:CVV>123</web:CVV>
+                </web:CardInfo>
+                <web:BillingAddress>
+                    <web:Street>Main Street 123</web:Street>
+                    <web:City>Sample City</web:City>
+                    <web:State>CA</web:State>
+                    <web:PostalCode>12345</web:PostalCode>
+                </web:BillingAddress>
+            </web:Payment>
+        </web:ProcessRequest>
+    </soapenv:Body>
+</soapenv:Envelope>
