@@ -11,6 +11,7 @@ import javax.xml.xpath.XPathFactory;
 import java.io.ByteArrayInputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class XMLTemplateProcessor {
     private final Map<String, String> namespaces = new HashMap<>();
@@ -49,11 +50,13 @@ public class XMLTemplateProcessor {
             if (!effectivePrefix.isEmpty() && !namespaces.containsKey(effectivePrefix.replaceFirst(".$",""))) {
                 namespaces.put(effectivePrefix.replaceFirst(".$",""), namespaceURI);
             }
-            currentXPath += siblingCondition + "/" + effectivePrefix + localName;
 
-            // Prepare attributes specific to this element, exclude xmlns attributes
             Map<String, String> elementAttributes = new HashMap<>();
             NamedNodeMap attributeNodes = element.getAttributes();
+            currentXPath += siblingCondition + "/" + effectivePrefix + localName + getNodeAttribForXpath(attributeNodes);
+
+            /*
+            // Prepare attributes specific to this element, exclude xmlns attributes
             for (int i = 0; i < attributeNodes.getLength(); i++) {
                 Attr attr = (Attr) attributeNodes.item(i);
                 String attrName = attr.getName();
@@ -79,6 +82,20 @@ public class XMLTemplateProcessor {
             for (Map.Entry<String, String> entry : elementAttributes.entrySet()) {
                 currentXPath += "[@" + entry.getKey() + "='" + entry.getValue() + "']";
             }
+            */
+
+            for (int i = 0; i < attributeNodes.getLength(); i++) {
+                Attr attr = (Attr) attributeNodes.item(i);
+                String attrName = attr.getName();
+                String attrValue = attr.getValue();
+
+                // Process variable attributes (skip xmlns attributes)
+                if (!attrName.startsWith("xmlns") && !attrName.matches(ATTRIBUTE_NAME_PATTERN) && isVariable(attrValue)) {
+                    // Add variable attribute to variableXPaths map
+                    String variableName = extractVariableNameFromAttribute(attrValue);
+                    variableXPaths.put(variableName, currentXPath + "/@" + attrName);
+                }
+            }
 
             // Handle variables in text content of elements
             if (nodeHasVariable(node)) {
@@ -92,6 +109,34 @@ public class XMLTemplateProcessor {
                 traverseNode(childNodes.item(i), currentXPath, elementAttributes);
             }
         }
+    }
+
+
+    private String getNodeAttribForXpath(NamedNodeMap attributeNodes) {
+        if(attributeNodes.getLength() == 0)
+            return "";
+
+        Map<String, String> elementAttributes = new HashMap<>();
+
+        for (int i = 0; i < attributeNodes.getLength(); i++) {
+            Attr attr = (Attr) attributeNodes.item(i);
+            String attrName = attr.getName();
+            String attrValue = attr.getValue();
+
+            // skip xsi attributes like xsi:schemaLocation or xsi:nil
+            // Allowed: letters, digits, hyphens, underscores, and periods
+            if (!attrName.startsWith("xmlns") && !attrName.matches(ATTRIBUTE_NAME_PATTERN) && !isVariable(attrValue)) {
+                // Add non-variable attributes to the element's attribute map
+                elementAttributes.put(attrName, attrValue);
+            }
+        }
+
+        if(elementAttributes.isEmpty())
+            return "";
+
+        return elementAttributes.entrySet().stream().map((entry) -> //stream each entry, map it to string value
+                        "[@" + entry.getKey() + "='" + entry.getValue() + "']")
+                .collect(Collectors.joining(""));
     }
 
     private String generateSiblingCondition(Node node) {
@@ -224,8 +269,8 @@ public class XMLTemplateProcessor {
 
 
     public static void test() {
-        String template = FileReaderUtil.readFileFromResources("templates/template_6.xml");
-        String content = FileReaderUtil.readFileFromResources("templates/original_6.xml");
+        String template = FileReaderUtil.readFileFromResources("templates/template_41.xml");
+        String content = FileReaderUtil.readFileFromResources("templates/original_41.xml");
 
         Map<String, String> keyVal = new HashMap<>();
 
