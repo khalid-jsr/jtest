@@ -41,8 +41,6 @@ public class Main {
 
 //        SoapTest.test();
 //        RestTest.test();
-//        XmlExtractor.test();
-//        XPathGenerator.test();
 
         XMLTemplateProcessor.test();
 
