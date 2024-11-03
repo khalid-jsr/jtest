@@ -1,0 +1,59 @@
+{
+  "store": {
+    "book": [
+      {
+        "category": "fiction",
+        "author": "J. R. R. Tolkien",
+        "title": "The Lord of the Rings",
+        "isbn": "0-547-01318-X",
+        "price": 22.99
+      },
+      {
+        "category": "fiction",
+        "author": null,
+        "title": null,
+        "publishDate": "1980-01-01T00:00:00+00:00"
+      },
+      {
+        "category": "reference",
+        "title": "Sayings of the Century",
+        "price": null,
+        "isbn": null,
+        "publishDate": "${{refPublishDate}}",
+        "rating": "${{absent-refCatRating}}"
+      }
+    ],
+    "bicycle": {
+      "color": "red",
+      "price": 19.95,
+      "spec": {
+        "frame": "steel",
+        "tire": {
+          "size": 27,
+          "kind": "road"
+        }
+      }
+    }
+  },
+  "expensiveBook": {
+    "category": "fiction",
+    "author": "J. K. Rowling",
+    "title": "Harry Potter and the Goblet of Fire",
+    "expensiveBookPrice": "${{expensiveBookPrice}}",
+    "isbn": "0-7475-3269-9",
+    "reviews": [
+      {
+        "reviewer": "The Guardian",
+        "rating": 4
+      },
+      {
+        "reviewer": "The New York Times",
+        "rating": null,
+        "metaData": {
+          "cover": "Paperback",
+          "color": "${{expensiveBookMetaColor}}"
+        }
+      }
+    ]
+  }
+}

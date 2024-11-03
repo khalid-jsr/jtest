@@ -1,4 +1,4 @@
-package me.test.comm;
+package me.test.api;
 
 import me.util.FileReaderUtil;
 import org.w3c.dom.*;
@@ -16,6 +16,8 @@ public class TemplateAnalyzer {
     private final Map<String, String> namespaces = new HashMap<>();
     private final Map<String, String> variableXPaths = new HashMap<>();
     private final static String ATTRIBUTE_NAME_PATTERN = ".*[^a-zA-Z0-9_\\-\\.]+.*";
+    private static final String VARIABLE_PATTERN = "\\$\\{\\{([a-zA-Z0-9\\-_]+?)\\}\\}";
+
 
     private void analyzeTemplate(String xmlTemplate) {
         try {
@@ -63,7 +65,6 @@ public class TemplateAnalyzer {
                         // Add variable attribute to variableXPaths map
                         String variableName = extractVariableNameFromAttribute(attrValue);
                         variableXPaths.put(variableName, currentXPath + "/@" + attrName);
-//                    } else if(!attrName.contains(":")) { // skip xsi attributes like xsi:schemaLocation or xsi:nil
                     }
                     // skip xsi attributes like xsi:schemaLocation or xsi:nil
                     // Allowed: letters, digits, hyphens, underscores, and periods
@@ -106,7 +107,6 @@ public class TemplateAnalyzer {
             Node sibling = siblings.item(i);
             String nodeText = sibling.getTextContent().trim();
             if (isLeafNode(node) && isLeafNode(sibling) && !sibling.getNodeName().equals(nodeName) && !isVariable(nodeText) && !nodeText.isEmpty()) {
-//                siblingMap.put(removePrefix(sibling.getNodeName()), nodeText);
                 siblingMap.put(generateNamespacePrefix(sibling) + sibling.getLocalName(), nodeText);
             }
         }
@@ -196,8 +196,6 @@ public class TemplateAnalyzer {
         return variableValues;
     }
 
-    private static final String VARIABLE_PATTERN = "\\$\\{\\{([a-zA-Z0-9\\-_]+?)\\}\\}";
-
     // Helper method to check if a value is a variable (e.g., ${{someVar}})
     private boolean isVariable(String value) {
         return value != null && value.matches(VARIABLE_PATTERN);
@@ -226,11 +224,8 @@ public class TemplateAnalyzer {
 
 
     public static void test() {
-//        String template = FileReaderUtil.readFileFromResources("templates/template_3.xml");
-//        String original = FileReaderUtil.readFileFromResources("templates/original_3.xml");
-
         String template = FileReaderUtil.readFileFromResources("templates/template_5.xml");
-        String original = FileReaderUtil.readFileFromResources("templates/original_5.xml");
+        String content = FileReaderUtil.readFileFromResources("templates/original_5.xml");
 
         Map<String, String> keyVal = new HashMap<>();
 
@@ -238,31 +233,7 @@ public class TemplateAnalyzer {
         analyzer.analyzeTemplate(template);
         int counter = 0;
 
-        /*
-        analyzer.namespaces.put("soap", "http://schemas.xmlsoap.org/soap/envelope/");
-        analyzer.namespaces.put("service", "http://www.example.com/service");
-        analyzer.namespaces.put("x", "http://www.example.com/default");
-//        analyzer.variableXPaths.put("color3", "/soap:Envelope/soap:Body/service:Response/service:Data/x:Item[@id='3']/Attributes/Attribute[Size='Large']/Color");
-        analyzer.variableXPaths.put("color3", "/soap:Envelope/soap:Body/service:Response/service:Data/x:Item[@id='3']/x:Attributes/x:Attribute[x:Size='Large']/x:Color");
-        */
-
-        /*System.out.println("Namespaces:");
-        counter = 1;
-        for (Map.Entry<String, String> entry : analyzer.getNamespaces().entrySet()) {
-            System.out.println("" + counter + ". " + entry.getKey() + " => " + entry.getValue());
-            counter++;
-        }*/
-
-        /*System.out.println("\nVariable XPaths:");
-        counter = 1;
-        for (Map.Entry<String, String> entry : analyzer.getVariableXPaths().entrySet()) {
-//            System.out.println("namespaces.put(\"" + entry.getKey().replace("\n", " \\n ") + "\", \"" + entry.getValue().replace("\n", " \\n ") + "\");");
-            System.out.println("" + counter + ". " + entry.getKey().replace("\n", " \\n ") + " => >|" + entry.getValue().replace("\n", " \\n ") + "|<");
-//            System.out.println();
-            counter++;
-        }*/
-
-        keyVal = analyzer.extractVariableValuesFromXML(original, analyzer.getNamespaces(), analyzer.getVariableXPaths());
+        keyVal = analyzer.extractVariableValuesFromXML(content, analyzer.getNamespaces(), analyzer.getVariableXPaths());
         System.out.println("\nVariables with values:");
         counter = 1;
         for (Map.Entry<String, String> entry : keyVal.entrySet()) {

@@ -1,14 +1,12 @@
-package me.test.comm;
+package me.test.api;
 
 import java.util.*;
 import javax.xml.parsers.*;
-import javax.xml.xpath.*;
 
 import me.util.FileReaderUtil;
 import org.w3c.dom.*;
 import java.io.StringReader;
 import org.xml.sax.InputSource;
-import javax.xml.namespace.NamespaceContext;
 import org.w3c.dom.NodeList;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;

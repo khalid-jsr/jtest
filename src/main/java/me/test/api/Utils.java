@@ -1,4 +1,4 @@
-package me.test.comm;
+package me.test.api;
 
 import java.util.Map;
 

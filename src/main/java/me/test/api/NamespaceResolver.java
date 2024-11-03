@@ -1,9 +1,8 @@
-package me.test.comm;
+package me.test.api;
 
 import org.w3c.dom.Document;
 import javax.xml.XMLConstants;
 import javax.xml.namespace.NamespaceContext;
-import javax.xml.xpath.XPathExpression;
 import java.util.Iterator;
 
 class NamespaceResolver implements NamespaceContext {

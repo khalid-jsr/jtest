@@ -1,5 +1,4 @@
-import me.test.*;
-import me.test.comm.*;
+import me.test.api.*;
 
 
 public class Main {
@@ -38,12 +37,15 @@ public class Main {
 
 //        ExceptionTest.test();
 
+//        RegexTest.test();
+
 //        SoapTest.test();
 //        RestTest.test();
 //        XmlExtractor.test();
 //        XPathGenerator.test();
-        TemplateAnalyzer.test();
 
-//        RegexTest.test();
+//        TemplateAnalyzer.test();
+
+        JsonTemplateProcessor.test();
     }
 }

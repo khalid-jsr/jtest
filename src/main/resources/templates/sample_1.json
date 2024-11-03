@@ -1,0 +1,67 @@
+{
+  "store": {
+    "book": [
+      {
+        "category": "fiction",
+        "author": "Evelyn Waugh",
+        "title": "Sword of Honour",
+        "price": 12.99,
+        "isbn": "0-00-637416-5"
+      },
+      {
+        "category": "reference",
+        "author": "Nigel Rees",
+        "title": "Sayings of the Century",
+        "price": 8.95,
+        "isbn": "0-201-53948-8",
+        "publishDate": "1996-12-19T16:39:57-08:00"
+      },
+      {
+        "category": "fiction",
+        "author": "Herman Melville",
+        "title": "Moby Dick",
+        "isbn": "0-553-21311-3",
+        "price": 8.99
+      },
+      {
+        "category": "fiction",
+        "author": "J. R. R. Tolkien",
+        "title": "The Lord of the Rings",
+        "isbn": "0-547-01318-X",
+        "price": 22.99
+      }
+    ],
+    "bicycle": {
+      "color": "red",
+      "price": 19.95,
+      "spec": {
+        "frame": "steel",
+        "tire": {
+          "size": 27,
+          "kind": "road"
+        }
+      }
+    }
+  },
+  "expensiveBook": {
+    "category": "fiction",
+    "author": "J. K. Rowling",
+    "title": "Harry Potter and the Goblet of Fire",
+    "expensiveBookPrice": 29.99,
+    "isbn": "0-7475-3269-9",
+    "reviews": [
+      {
+        "reviewer": "The New York Times",
+        "rating": 5,
+        "metaData": {
+          "cover": "Paperback",
+          "color": "Black and White"
+        }
+      },
+      {
+        "reviewer": "The Guardian",
+        "rating": 4
+      }
+    ]
+  }
+}

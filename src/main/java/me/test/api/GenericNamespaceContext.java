@@ -1,4 +1,4 @@
-package me.test.comm;
+package me.test.api;
 
 import javax.xml.namespace.NamespaceContext;
 import java.util.HashMap;

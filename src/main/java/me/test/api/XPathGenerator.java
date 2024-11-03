@@ -1,4 +1,4 @@
-package me.test.comm;
+package me.test.api;
 
 import me.util.FileReaderUtil;
 import org.w3c.dom.*;

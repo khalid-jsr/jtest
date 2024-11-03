@@ -1,16 +1,14 @@
-package me.test.comm;
+package me.test.api;
 
 import jakarta.xml.soap.*;
 
 import javax.xml.transform.stream.StreamSource;
 import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
 import me.util.FileReaderUtil;
-import static me.test.comm.Utils.processTemplate;
+import static me.test.api.Utils.processTemplate;
 
 
 public class SoapTest {

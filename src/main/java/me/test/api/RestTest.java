@@ -1,4 +1,4 @@
-package me.test.comm;
+package me.test.api;
 
 import java.io.IOException;
 import java.net.URI;
@@ -8,10 +8,9 @@ import java.net.http.HttpResponse;
 import java.util.HashMap;
 import java.util.Map;
 
-import me.util.APIType;
 import me.util.FileReaderUtil;
 import me.util.HTTPVerb;
-import static me.test.comm.Utils.processTemplate;
+import static me.test.api.Utils.processTemplate;
 
 public class RestTest {
     protected String sendRestRequest(String url, String payload, Map<String, String> headers, Map<String, String> requestMap, HTTPVerb httpVerb) {
