@@ -1,0 +1,10 @@
+<catalog xmlns="http://example.com/catalog">
+  <product id="1" code="${{code1}}">
+    <name>Product A</name>
+    <description>${{Quality1}}</description>
+  </product>
+  <product id="2" code="${{code2}}">
+    <name>Product B</name>
+    <description variable="DescVar">${{Quality2}}</description>
+  </product>
+</catalog>

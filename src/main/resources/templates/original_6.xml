@@ -1,0 +1,10 @@
+<catalog xmlns="http://example.com/catalog">
+  <product id="1" code="My Code 1">
+    <name>Product A</name>
+    <description>Short desc: item 1</description>
+  </product>
+  <product id="2" code="My Code 2">
+    <name>Product B</name>
+    <description variable="DescVar">A very very long description for second item</description>
+  </product>
+</catalog>

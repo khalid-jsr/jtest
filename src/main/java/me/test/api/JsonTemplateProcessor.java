@@ -6,16 +6,17 @@ import me.util.FileReaderUtil;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
-public class JsonTemplateProcessor {
+public class JsonTemplateProcessor extends TemplateProcessor {
     private final Map<String, String> variableJsonPaths = new HashMap<>();
 
     public void analyzeTemplate(String jsonTemplate) {
         DocumentContext context = JsonPath.parse(jsonTemplate);
-        traverseJson(context.json(), "$");
+        traverseNode(context.json(), "$");
     }
 
-    private void traverseJson(Object jsonNode, String currentPath) {
+    protected void traverseNode(Object jsonNode, String currentPath) {
         if (jsonNode instanceof Map) {
             Map<String, Object> jsonObject = (Map<String, Object>) jsonNode;
             for (Map.Entry<String, Object> entry : jsonObject.entrySet()) {
@@ -27,7 +28,7 @@ public class JsonTemplateProcessor {
                     String variableName = ((String) value).replace("${{", "").replace("}}", "");
                     variableJsonPaths.put(variableName, newPath);
                 } else {
-                    traverseJson(value, newPath);
+                    traverseNode(value, newPath);
                 }
             }
         } else if (jsonNode instanceof Iterable) {
@@ -36,25 +37,35 @@ public class JsonTemplateProcessor {
             for (Object item : jsonArray) {
                 String siblingCondition = generateSiblingCondition(item);
                 String newPath = currentPath + siblingCondition;
-                traverseJson(item, newPath);
+                traverseNode(item, newPath);
                 index++;
             }
         }
     }
 
     private String generateSiblingCondition(Object item) {
+        Map<String, String> conditions = new HashMap<>();
+
         if (item instanceof Map) {
             Map<String, Object> itemMap = (Map<String, Object>) item;
             for (Map.Entry<String, Object> entry : itemMap.entrySet()) {
                 if (entry.getValue() instanceof String && !((String) entry.getValue()).isEmpty()) {
-                    return "[?(@." + entry.getKey() + " == '" + entry.getValue() + "')]";
+//                    return "[?(@." + entry.getKey() + " == '" + entry.getValue() + "')]";
+                    if(!isVariable((String) entry.getValue()))
+                        conditions.put(entry.getKey(), (String) entry.getValue());
                 }
             }
         }
-        return "";
+
+        if(conditions.isEmpty())
+            return "";
+
+        return conditions.entrySet().stream().map((entry) -> //stream each entry, map it to string value
+                        "[?(@." + entry.getKey() + " == '" + entry.getValue() + "')]")
+                .collect(Collectors.joining(""));
     }
 
-    public Map<String, String> extractVariableValuesFromJson(String jsonString, Map<String, String> variablePaths) {
+    public Map<String, String> extractVariableValues(String jsonString, Map<String, String> variablePaths) {
         Map<String, String> variableValues = new HashMap<>();
         DocumentContext context = JsonPath.parse(jsonString);
 
@@ -81,13 +92,45 @@ public class JsonTemplateProcessor {
     }
 
     public static void test() {
-        String jsonTemplate = FileReaderUtil.readFileFromResources("templates/template_1.json");
-        String jsonContent = FileReaderUtil.readFileFromResources("templates/sample_1.json");
+        String template = FileReaderUtil.readFileFromResources("templates/template_1.json");
+        String content = FileReaderUtil.readFileFromResources("templates/sample_1.json");
 
         JsonTemplateProcessor analyzer = new JsonTemplateProcessor();
-        analyzer.analyzeTemplate(jsonTemplate);
+        analyzer.analyzeTemplate(template);
+        int counter = 0;
 
-        Map<String, String> extractedValues = analyzer.extractVariableValuesFromJson(jsonContent, analyzer.getVariableJsonPaths());
-        extractedValues.forEach((key, value) -> System.out.println(key + ": " + value));
+        counter = 1;
+        System.out.println("JSON Path:");
+        for (Map.Entry<String, String> entry : analyzer.getVariableJsonPaths().entrySet()) {
+            System.out.println(counter + ". " + entry.getKey() + ": [" + entry.getValue() + "]");
+            counter++;
+        }
+
+        // Extract variable values from JSON content
+        Map<String, String> variableValues = analyzer.extractVariableValues(content, analyzer.getVariableJsonPaths());
+
+        counter = 1;
+        System.out.println("\nVariables with values:");
+        for (Map.Entry<String, String> entry : variableValues.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            if (value != null && !value.isEmpty())
+                System.out.println(counter + ". " + key + ": [" + value + "]");
+
+            counter++;
+        }
+
+        counter = 1;
+        System.out.println("\nVariables WITHOUT values:");
+        for (Map.Entry<String, String> entry : variableValues.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            if (value == null)
+                System.out.println(counter + ". " + key + ": [" + value + "]");
+
+            counter++;
+        }
+
+
     }
 }

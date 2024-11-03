@@ -12,7 +12,7 @@ import java.io.ByteArrayInputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-public class TemplateAnalyzer {
+public class XMLTemplateProcessor {
     private final Map<String, String> namespaces = new HashMap<>();
     private final Map<String, String> variableXPaths = new HashMap<>();
     private final static String ATTRIBUTE_NAME_PATTERN = ".*[^a-zA-Z0-9_\\-\\.]+.*";
@@ -224,16 +224,24 @@ public class TemplateAnalyzer {
 
 
     public static void test() {
-        String template = FileReaderUtil.readFileFromResources("templates/template_5.xml");
-        String content = FileReaderUtil.readFileFromResources("templates/original_5.xml");
+        String template = FileReaderUtil.readFileFromResources("templates/template_6.xml");
+        String content = FileReaderUtil.readFileFromResources("templates/original_6.xml");
 
         Map<String, String> keyVal = new HashMap<>();
 
-        TemplateAnalyzer analyzer = new TemplateAnalyzer();
+        XMLTemplateProcessor analyzer = new XMLTemplateProcessor();
         analyzer.analyzeTemplate(template);
+        keyVal = analyzer.extractVariableValuesFromXML(content, analyzer.getNamespaces(), analyzer.getVariableXPaths());
         int counter = 0;
 
-        keyVal = analyzer.extractVariableValuesFromXML(content, analyzer.getNamespaces(), analyzer.getVariableXPaths());
+        System.out.println("\nXPaths:");
+        counter = 1;
+        for (Map.Entry<String, String> entry : analyzer.variableXPaths.entrySet()) {
+            if (null != entry.getValue())
+                System.out.println("" + counter + ". " + entry.getKey() + ": [" + entry.getValue() + "]");
+            counter++;
+        }
+
         System.out.println("\nVariables with values:");
         counter = 1;
         for (Map.Entry<String, String> entry : keyVal.entrySet()) {

@@ -44,8 +44,8 @@ public class Main {
 //        XmlExtractor.test();
 //        XPathGenerator.test();
 
-//        TemplateAnalyzer.test();
+        XMLTemplateProcessor.test();
 
-        JsonTemplateProcessor.test();
+//        JsonTemplateProcessor.test();
     }
 }
