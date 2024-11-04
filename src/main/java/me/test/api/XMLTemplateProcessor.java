@@ -13,12 +13,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class XMLTemplateProcessor {
-    private final Map<String, String> namespaces = new HashMap<>();
-    private final Map<String, String> variableXPaths = new HashMap<>();
-    private final static String ATTRIBUTE_NAME_PATTERN = ".*[^a-zA-Z0-9_\\-\\.]+.*";
-    private static final String VARIABLE_PATTERN = "\\$\\{\\{([a-zA-Z0-9\\-_]+?)\\}\\}";
-
+public class XMLTemplateProcessor extends TemplateProcessor {
+    private static final Map<String, String> namespaceMap = new HashMap<>();
 
     private void analyzeTemplate(String xmlTemplate) {
         try {
@@ -29,14 +25,22 @@ public class XMLTemplateProcessor {
             Document document = builder.parse(new ByteArrayInputStream(xmlTemplate.getBytes()));
 
             // Traverse document and populate namespaces and variableXPaths
-            traverseNode(document.getDocumentElement(), "", new HashMap<>());
+            traverseNode(document.getDocumentElement(), "");
         } catch (Exception ex) {
             ex.printStackTrace();
         }
     }
 
 
-    private void traverseNode(Node node, String currentXPath, Map<String, String> parentAttributes) {
+    @Override
+    protected void traverseNode(Object node, String currentPath) {
+        if(node instanceof Node)
+            traverseNode((Node)node, currentPath);
+        else
+            System.out.println("Error: Object is not a Node ");
+    }
+
+    private void traverseNode(Node node, String currentXPath) {
         if (node.getNodeType() == Node.ELEMENT_NODE) {
             Element element = (Element) node;
             String localName = element.getLocalName();
@@ -47,70 +51,43 @@ public class XMLTemplateProcessor {
 
             // Register namespace if it exists and isn't already registered
             String effectivePrefix = generateNamespacePrefix(node);
-            if (!effectivePrefix.isEmpty() && !namespaces.containsKey(effectivePrefix.replaceFirst(".$",""))) {
-                namespaces.put(effectivePrefix.replaceFirst(".$",""), namespaceURI);
+            String prefixKey = effectivePrefix.replaceFirst(".$","");
+            if (!effectivePrefix.isEmpty() && !getNamespaces().containsKey(prefixKey)) {
+                addToNamespace(prefixKey, namespaceURI);
             }
 
             Map<String, String> elementAttributes = new HashMap<>();
             NamedNodeMap attributeNodes = element.getAttributes();
             currentXPath += siblingCondition + "/" + effectivePrefix + localName + getNodeAttribForXpath(attributeNodes);
 
-            /*
-            // Prepare attributes specific to this element, exclude xmlns attributes
             for (int i = 0; i < attributeNodes.getLength(); i++) {
                 Attr attr = (Attr) attributeNodes.item(i);
-                String attrName = attr.getName();
-                String attrValue = attr.getValue();
+                String attribName = attr.getName();
+                String attribValue = attr.getValue();
 
                 // Process variable attributes (skip xmlns attributes)
-                if (!attrName.startsWith("xmlns")) {
-                    if (attrValue.startsWith("${{")) {
-                        // Add variable attribute to variableXPaths map
-                        String variableName = extractVariableNameFromAttribute(attrValue);
-                        variableXPaths.put(variableName, currentXPath + "/@" + attrName);
-                    }
-                    // skip xsi attributes like xsi:schemaLocation or xsi:nil
-                    // Allowed: letters, digits, hyphens, underscores, and periods
-                    else if(!attrName.matches(ATTRIBUTE_NAME_PATTERN)) {
-                        // Add other non-variable attributes to the element's attribute map
-                        elementAttributes.put(attrName, attrValue);
-                    }
-                }
-            }
-
-            // Append this element's non-variable attributes to the XPath for uniqueness
-            for (Map.Entry<String, String> entry : elementAttributes.entrySet()) {
-                currentXPath += "[@" + entry.getKey() + "='" + entry.getValue() + "']";
-            }
-            */
-
-            for (int i = 0; i < attributeNodes.getLength(); i++) {
-                Attr attr = (Attr) attributeNodes.item(i);
-                String attrName = attr.getName();
-                String attrValue = attr.getValue();
-
-                // Process variable attributes (skip xmlns attributes)
-                if (!attrName.startsWith("xmlns") && !attrName.matches(ATTRIBUTE_NAME_PATTERN) && isVariable(attrValue)) {
+                if (isProperAttribute(attribName) && isVariable(attribValue)) {
                     // Add variable attribute to variableXPaths map
-                    String variableName = extractVariableNameFromAttribute(attrValue);
-                    variableXPaths.put(variableName, currentXPath + "/@" + attrName);
+                    String variableName = extractVariableName(attribValue);
+                    addToPath(variableName, currentXPath + "/@" + attribName);
                 }
             }
 
             // Handle variables in text content of elements
-            if (nodeHasVariable(node)) {
-                String variableName = extractVariableName(node);
-                variableXPaths.put(variableName, currentXPath);
+            String nodeText = node.getTextContent();
+//            if (nodeHasVariable(node)) {
+            if (isVariable(nodeText)) {
+                String variableName = extractVariableName(nodeText);
+                addToPath(variableName, currentXPath);
             }
 
             // Recursively process child nodes with current element's attributes passed along
             NodeList childNodes = node.getChildNodes();
             for (int i = 0; i < childNodes.getLength(); i++) {
-                traverseNode(childNodes.item(i), currentXPath, elementAttributes);
+                traverseNode(childNodes.item(i), currentXPath);
             }
         }
     }
-
 
     private String getNodeAttribForXpath(NamedNodeMap attributeNodes) {
         if(attributeNodes.getLength() == 0)
@@ -120,21 +97,21 @@ public class XMLTemplateProcessor {
 
         for (int i = 0; i < attributeNodes.getLength(); i++) {
             Attr attr = (Attr) attributeNodes.item(i);
-            String attrName = attr.getName();
-            String attrValue = attr.getValue();
+            String attribName = attr.getName();
+            String attribValue = attr.getValue();
 
             // skip xsi attributes like xsi:schemaLocation or xsi:nil
             // Allowed: letters, digits, hyphens, underscores, and periods
-            if (!attrName.startsWith("xmlns") && !attrName.matches(ATTRIBUTE_NAME_PATTERN) && !isVariable(attrValue)) {
+            if (isProperAttribute(attribName) && !isVariable(attribValue)) {
                 // Add non-variable attributes to the element's attribute map
-                elementAttributes.put(attrName, attrValue);
+                elementAttributes.put(attribName, attribValue);
             }
         }
 
         if(elementAttributes.isEmpty())
             return "";
 
-        return elementAttributes.entrySet().stream().map((entry) -> //stream each entry, map it to string value
+        return elementAttributes.entrySet().stream().map((entry) ->
                         "[@" + entry.getKey() + "='" + entry.getValue() + "']")
                 .collect(Collectors.joining(""));
     }
@@ -163,11 +140,6 @@ public class XMLTemplateProcessor {
         return condition.toString();
     }
 
-    private String extractVariableNameFromAttribute(String attributeValue) {
-        return attributeValue.substring(attributeValue.indexOf("${{") + 3, attributeValue.indexOf("}}"));
-    }
-
-
     private String generateNamespacePrefix(Node node) {
         Element element = (Element) node;
         return generateNamespacePrefix(element.getPrefix(), element.getNamespaceURI());
@@ -184,20 +156,12 @@ public class XMLTemplateProcessor {
     }
 
     private boolean nodeHasVariable(Node node) {
-        return node.getTextContent() != null && node.getTextContent().contains("${{");
+        return node.getTextContent() != null && node.getTextContent().contains("${");
     }
 
     private String extractVariableName(Node node) {
         String content = node.getTextContent();
-        return content.substring(content.indexOf("${{") + 3, content.indexOf("}}"));
-    }
-
-    public Map<String, String> getNamespaces() {
-        return namespaces;
-    }
-
-    public Map<String, String> getVariableXPaths() {
-        return variableXPaths;
+        return extractVariableName(content);
     }
 
     public Map<String, String> extractVariableValuesFromXML(String xmlString, Map<String, String> namespaces, Map<String, String> variableXPaths) {
@@ -241,11 +205,6 @@ public class XMLTemplateProcessor {
         return variableValues;
     }
 
-    // Helper method to check if a value is a variable (e.g., ${{someVar}})
-    private boolean isVariable(String value) {
-        return value != null && value.matches(VARIABLE_PATTERN);
-    }
-
     // Helper method to check if a node is a leaf (i.e., has no child elements)
     private boolean isLeafNode(Node node) {
         if(node.getNodeType() != Node.ELEMENT_NODE)
@@ -267,21 +226,36 @@ public class XMLTemplateProcessor {
         return nodeName.split(":")[1];
     }
 
+    protected Map<String, String> getNamespaces() {
+        return namespaceMap;
+    }
+
+    protected void addToNamespace(String variableName, String namespaceValue) {
+        getNamespaces().put(variableName, namespaceValue);
+    }
 
     public static void test() {
-        String template = FileReaderUtil.readFileFromResources("templates/jTemplate_6.xml");
-        String content = FileReaderUtil.readFileFromResources("templates/jOriginal_6.xml");
+        String template = FileReaderUtil.readFileFromResources("templates/template_5.xml");
+        String content = FileReaderUtil.readFileFromResources("templates/original_5.xml");
 
         Map<String, String> keyVal = new HashMap<>();
 
         XMLTemplateProcessor analyzer = new XMLTemplateProcessor();
         analyzer.analyzeTemplate(template);
-        keyVal = analyzer.extractVariableValuesFromXML(content, analyzer.getNamespaces(), analyzer.getVariableXPaths());
+        keyVal = analyzer.extractVariableValuesFromXML(content, analyzer.getNamespaces(), analyzer.getPaths());
         int counter = 0;
+
+        System.out.println("\nNamespaces:");
+        counter = 1;
+        for (Map.Entry<String, String> entry : analyzer.getNamespaces().entrySet()) {
+            if (null != entry.getValue())
+                System.out.println("" + counter + ". " + entry.getKey() + ": [" + entry.getValue() + "]");
+            counter++;
+        }
 
         System.out.println("\nXPaths:");
         counter = 1;
-        for (Map.Entry<String, String> entry : analyzer.variableXPaths.entrySet()) {
+        for (Map.Entry<String, String> entry : analyzer.getPaths().entrySet()) {
             if (null != entry.getValue())
                 System.out.println("" + counter + ". " + entry.getKey() + ": [" + entry.getValue() + "]");
             counter++;
@@ -292,6 +266,8 @@ public class XMLTemplateProcessor {
         for (Map.Entry<String, String> entry : keyVal.entrySet()) {
             if (null != entry.getValue())
                 System.out.println("" + counter + ". " + entry.getKey() + ": [" + entry.getValue() + "]");
+            else
+                System.out.println("" + counter + ".");
             counter++;
         }
 

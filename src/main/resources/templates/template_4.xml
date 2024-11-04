@@ -2,10 +2,10 @@
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <soap:Header>
     <auth:Authentication xmlns:auth="http://www.example.com/auth">
-      <auth:Token isEncrypted="${{isEncrypted}}">${{token}}</auth:Token>
+      <auth:Token isEncrypted="${isEncrypted}">${token}</auth:Token>
       <auth:User>
-        <auth:Name>${{username}}</auth:Name>
-        <auth:IsSystemUser>${{Absent-IsSystemUser}}</auth:IsSystemUser>
+        <auth:Name>${username}</auth:Name>
+        <auth:IsSystemUser>${Absent-IsSystemUser}</auth:IsSystemUser>
         <auth:Roles>
           <auth:Role>Admin</auth:Role>
           <auth:Role>User</auth:Role>
@@ -15,22 +15,22 @@
   </soap:Header>
   <soap:Body>
     <service:Response xmlns:service="http://www.example.com/service" xmlns="http://www.example.com/default">
-      <service:Status>${{ServiceStatus}}</service:Status>
+      <service:Status>${ServiceStatus}</service:Status>
       <service:Data>
         <service:Item id="1">
-          <service:Name>${{ItemName1}}</service:Name>
+          <service:Name>${ItemName1}</service:Name>
           <service:Description/>
-          <Price currency="${{Item1Currency}}"/>
+          <Price currency="${Item1Currency}"/>
           <Attributes>
             <Color>Red</Color>
-            <Size>${{size1}}</Size>
+            <Size>${size1}</Size>
           </Attributes>
         </service:Item>
         <Item id="3">
-          <Name>${{ItemName3}}</Name>
+          <Name>${ItemName3}</Name>
           <Attributes>
             <Attribute>
-              <Color>${{color3}}</Color>
+              <Color>${color3}</Color>
               <Size>Large</Size>
             </Attribute>
             <Attribute>
@@ -40,15 +40,15 @@
           </Attributes>
         </Item>
         <misc:Extra xmlns:misc="http://www.example.com/misc">
-          <misc:ReferenceID>${{Absent_ReferenceID}}</misc:ReferenceID>
+          <misc:ReferenceID>${Absent_ReferenceID}</misc:ReferenceID>
         </misc:Extra>
       </service:Data>
       <MetaTags>
-        <Meta Tag="Area">${{area}}</Meta>
+        <Meta Tag="Area">${area}</Meta>
       </MetaTags>
       <MetaTags2 xmlns="http://www.example.com/meta">
         <Meta Tag="Customer">Kabul Mia</Meta>
-        <Meta Tag="Previous Purchase Date">${{PrevPurchaseDate}}</Meta>
+        <Meta Tag="Previous Purchase Date">${PrevPurchaseDate}</Meta>
       </MetaTags2>
     </service:Response>
   </soap:Body>

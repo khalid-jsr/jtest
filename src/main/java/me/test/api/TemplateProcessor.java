@@ -7,40 +7,36 @@ import java.util.regex.Pattern;
 
 
 public abstract class TemplateProcessor {
-    private final Map<String, String> pathMap = new HashMap<>();
-    private final Map<String, String> namespaceMap = new HashMap<>();
-    private final static String ATTRIBUTE_NAME_PATTERN = ".*[^a-zA-Z0-9_\\-\\.]+.*";
-    private static final String VARIABLE_NAME_PATTERN = "\\$\\{\\{([a-zA-Z0-9\\-_]+?)\\}\\}";
+    private static final Map<String, String> pathMap = new HashMap<>();
+    private static final String INVALID_ATTRIBUTE_NAME_PATTERN = ".*[^a-zA-Z0-9_\\-\\.]+.*";
+    private static final String VARIABLE_NAME_PATTERN = "\\$\\{([a-zA-Z0-9\\-_]+?)\\}";
 
     abstract void traverseNode(Object node, String currentPath);
-
 
     protected static String getVariableNamePattern() {
         return VARIABLE_NAME_PATTERN;
     }
 
-    protected static String getAttributeNamPattern() {
-        return ATTRIBUTE_NAME_PATTERN;
-    }
-
-    protected void addToNamespace(String variableName, String namespaceValue) {
-        getNamespaces().put(variableName, namespaceValue);
+    protected static String getInvalidAttributeNamPattern() {
+        return INVALID_ATTRIBUTE_NAME_PATTERN;
     }
 
     protected void addToPath(String variableName, String pathValue) {
         getPaths().put(variableName, pathValue);
     }
 
-    protected Map<String, String> getNamespaces() {
-        return namespaceMap;
-    }
-
     protected Map<String, String> getPaths() {
         return pathMap;
     }
 
-    protected boolean isVariable(String value) {
-        return value != null && value.matches(getVariableNamePattern());
+    protected boolean isVariable(String variableName) {
+        return variableName != null && !variableName.isEmpty() && variableName.matches(getVariableNamePattern());
+    }
+
+    protected boolean isProperAttribute(String attributeName) {
+        return attributeName != null && !attributeName.isEmpty()
+                && !attributeName.equals("xmlns")
+                && !attributeName.matches(getInvalidAttributeNamPattern());
     }
 
     protected String extractVariableName(String value) {

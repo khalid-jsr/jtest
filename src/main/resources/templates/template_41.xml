@@ -2,10 +2,10 @@
 <Envelope>
   <Header>
     <Authentication>
-      <Token isEncrypted="${{isEncrypted}}">${{token}}</Token>
+      <Token isEncrypted="${isEncrypted}">${token}</Token>
       <User>
-        <Name>${{username}}</Name>
-        <IsSystemUser>${{Absent-IsSystemUser}}</IsSystemUser>
+        <Name>${username}</Name>
+        <IsSystemUser>${Absent-IsSystemUser}</IsSystemUser>
         <Roles>
           <Role>Admin</Role>
           <Role>User</Role>
@@ -15,22 +15,22 @@
   </Header>
   <Body>
     <Response>
-      <Status>${{ServiceStatus}}</Status>
+      <Status>${ServiceStatus}</Status>
       <Data>
         <Item id="1">
-          <Name>${{ItemName1}}</Name>
+          <Name>${ItemName1}</Name>
           <Description/>
-          <Price currency="${{Item1Currency}}"/>
+          <Price currency="${Item1Currency}"/>
           <Attributes>
             <Color>Red</Color>
-            <Size>${{size1}}</Size>
+            <Size>${size1}</Size>
           </Attributes>
         </Item>
         <Item id="3">
-          <Name>${{ItemName3}}</Name>
+          <Name>${ItemName3}</Name>
           <Attributes>
             <Attribute>
-              <Color>${{color3}}</Color>
+              <Color>${color3}</Color>
               <Size>Large</Size>
             </Attribute>
             <Attribute>
@@ -40,15 +40,15 @@
           </Attributes>
         </Item>
         <Extra>
-          <ReferenceID>${{Absent_ReferenceID}}</ReferenceID>
+          <ReferenceID>${Absent_ReferenceID}</ReferenceID>
         </Extra>
       </Data>
       <MetaTags>
-        <Meta Tag="Area">${{area}}</Meta>
+        <Meta Tag="Area">${area}</Meta>
       </MetaTags>
       <MetaTags2>
         <Meta Tag="Customer">Kabul Mia</Meta>
-        <Meta Tag="Previous Purchase Date">${{PrevPurchaseDate}}</Meta>
+        <Meta Tag="Previous Purchase Date">${PrevPurchaseDate}</Meta>
       </MetaTags2>
     </Response>
   </Body>

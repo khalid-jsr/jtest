@@ -3,24 +3,24 @@
            xmlns:mg="http://www.example.com/magazine"
            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
            xsi:schemaLocation="http://www.example.com/bookstore bookstore.xsd"
-           IsSuccessful="${{TxnSuccessful}}"
-           Error="${{error}}">
+           IsSuccessful="${TxnSuccessful}"
+           Error="${absent_error}">
 
   <bk:book>
-    <title>${{BookTitle}}</title>
-    <!-- Promo IsPaid="${{PaidForPromo}}"/ -->
+    <title>${BookTitle}</title>
+    <!-- Promo IsPaid="${PaidForPromo}"/ -->
     <bk:author/>
     <bk:price currency="USD"/>
-    <bk:price currency="BDT">${{BookPrice}}</bk:price>
-    <bk:genre>${{BookGenre}}</bk:genre>
-    <bk:publish_date year="${{BookPublishYear}}">${{BookPublishDate}}</bk:publish_date>
+    <bk:price currency="BDT">${BookPrice}</bk:price>
+    <bk:genre>${BookGenre}</bk:genre>
+    <bk:publish_date year="${BookPublishYear}">${BookPublishDate}</bk:publish_date>
     <bk:metadata>
       <key>ISBN</key>
       <value>0-545-13624-X</value>
     </bk:metadata>
     <bk:metadata>
       <key>Country</key>
-      <value>${{BookCountry}}</value>
+      <value>${BookCountry}</value>
     </bk:metadata>
 
     <bk:reviews>
@@ -42,7 +42,7 @@
     </bk:elements>
   </bk:book>
 
-  <mg:magazine id="${{MagazineID}}">
+  <mg:magazine id="${MagazineID}">
     <title>National Geographic</title>
     <mg:issue_number>12</mg:issue_number>
     <publish_date>2023-12-01</publish_date>
