@@ -43,8 +43,9 @@ public class Main {
 //        SoapTest.test();
 //        RestTest.test();
 
-        XMLTemplateProcessor.test();
-
+//        XMLTemplateProcessor.test();
 //        JsonTemplateProcessor.test();
+
+        FreeMarkerTest.test();
     }
 }
