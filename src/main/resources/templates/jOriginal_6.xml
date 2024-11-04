@@ -1,0 +1,10 @@
+<library xmlns="http://example.com/library">
+  <shelf name="A">
+    <book title="Book 1" author="Author 1" variable="ISBN123"/>
+    <book title="Book 2" author="Author 2" variable="ISBN456"/>
+  </shelf>
+  <shelf name="B">
+    <book title="Book 3" author="Author 3" variable="ISBN789"/>
+    <book title="Book 4" author="Author 4" variable="ISBN012"/>
+  </shelf>
+</library>

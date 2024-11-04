@@ -92,8 +92,8 @@ public class JsonTemplateProcessor extends TemplateProcessor {
     }
 
     public static void test() {
-        String template = FileReaderUtil.readFileFromResources("templates/template_1.json");
-        String content = FileReaderUtil.readFileFromResources("templates/sample_1.json");
+        String template = FileReaderUtil.readFileFromResources("templates/template_2.json");
+        String content = FileReaderUtil.readFileFromResources("templates/sample_2.json");
 
         JsonTemplateProcessor analyzer = new JsonTemplateProcessor();
         analyzer.analyzeTemplate(template);

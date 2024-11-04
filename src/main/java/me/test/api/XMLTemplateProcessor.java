@@ -214,7 +214,7 @@ public class XMLTemplateProcessor {
             // Set up the XPath factory and context with namespaces
             XPathFactory xPathFactory = XPathFactory.newInstance();
             XPath xPath = xPathFactory.newXPath();
-            GenericNamespaceContext namespaceContext = new GenericNamespaceContext(namespaces); // Custom namespace context
+            SimpleNamespaceContext namespaceContext = new SimpleNamespaceContext(namespaces); // Custom namespace context
             xPath.setNamespaceContext(namespaceContext);
 
             // Iterate over each variable and its XPath
@@ -269,8 +269,8 @@ public class XMLTemplateProcessor {
 
 
     public static void test() {
-        String template = FileReaderUtil.readFileFromResources("templates/template_41.xml");
-        String content = FileReaderUtil.readFileFromResources("templates/original_41.xml");
+        String template = FileReaderUtil.readFileFromResources("templates/jTemplate_6.xml");
+        String content = FileReaderUtil.readFileFromResources("templates/jOriginal_6.xml");
 
         Map<String, String> keyVal = new HashMap<>();
 

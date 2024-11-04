@@ -6,18 +6,18 @@ import java.util.Iterator;
 import java.util.Map;
 
 
-public class GenericNamespaceContext implements NamespaceContext {
+public class SimpleNamespaceContext implements NamespaceContext {
     private final Map<String, String> namespaces;
 
     public void addNamespace(String prefix, String uri) {
         namespaces.put(prefix, uri);
     }
 
-    public GenericNamespaceContext() {
+    public SimpleNamespaceContext() {
         this.namespaces = new HashMap<>();
     }
 
-    public GenericNamespaceContext(Map<String, String> namespaces) {
+    public SimpleNamespaceContext(Map<String, String> namespaces) {
         this.namespaces = namespaces;
     }
 
