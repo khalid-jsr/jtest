@@ -1,11 +1,7 @@
 package me.test;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.OutputStreamWriter;
-import java.io.Writer;
+import java.io.*;
 import java.util.*;
-import java.io.IOException;
 
 import freemarker.template.*;
 import freemarker.core.ParseException;
@@ -27,12 +23,18 @@ public class FreeMarkerTest {
         requestParams.put("DOB", new Date());
 
         try {
-            Template template = cfg.getTemplate("freemarker_1.ftl");
+            Template template = cfg.getTemplate("freemarker/freemarker_1.ftl");
 
             // 2.3. Generate the output
             // Write output to the console
-            Writer consoleWriter = new OutputStreamWriter(System.out);
-            template.process(requestParams, consoleWriter);
+//            Writer consoleWriter = new OutputStreamWriter(System.out);
+//            template.process(requestParams, consoleWriter);
+
+            Writer writer = new StringWriter();;
+            template.process(requestParams, writer);
+            String result = writer.toString();
+            System.out.println("Here is the FreeMarker output =======>\n");
+            System.out.println(result);
 
             // For the sake of example, also write output into a file:
             //Writer writer = new FileWriter(new File("output.html"));

@@ -235,8 +235,8 @@ public class XMLTemplateProcessor extends TemplateProcessor {
     }
 
     public static void test() {
-        String template = FileReaderUtil.readFileFromResources("templates/template_5.xml");
-        String content = FileReaderUtil.readFileFromResources("templates/original_5.xml");
+        String template = FileReaderUtil.readFileFromResources("templates/template_4.xml");
+        String content = FileReaderUtil.readFileFromResources("templates/original_4.xml");
 
         Map<String, String> keyVal = new HashMap<>();
 

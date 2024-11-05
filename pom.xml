@@ -7,14 +7,19 @@
   <name>Archetype - jtest</name>
   <url>http://maven.apache.org</url>
 
+  <properties>
+    <java.version>11</java.version>
+    <app.version>1.0.1</app.version>
+  </properties>
+
   <dependencies>
     <dependency>
       <groupId>commons-codec</groupId>
       <artifactId>commons-codec</artifactId>
-      <version>1.11</version>
+      <version>1.17.0</version>
     </dependency>
 
-    <dependency>
+    <!-- dependency>
       <groupId>jakarta.xml.ws</groupId>
       <artifactId>jakarta.xml.ws-api</artifactId>
       <version>4.0.2</version>
@@ -24,6 +29,11 @@
       <artifactId>jaxws-rt</artifactId>
       <version>4.0.2</version>
       <scope>runtime</scope>
+    </dependency -->
+    <dependency>
+      <groupId>jakarta.xml.soap</groupId>
+      <artifactId>jakarta.xml.soap-api</artifactId>
+      <version>3.0.2</version>
     </dependency>
 
     <!-- https://mvnrepository.com/artifact/org.json/json -->
@@ -52,8 +62,8 @@
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
         <configuration>
-          <source>11</source>
-          <target>11</target>
+          <source>${java.version}</source>
+          <target>${java.version}</target>
         </configuration>
       </plugin>
     </plugins>
