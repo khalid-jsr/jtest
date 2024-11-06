@@ -24,9 +24,10 @@ public class JsonTemplateProcessor extends TemplateProcessor {
                 Object value = entry.getValue();
 
                 String newPath = currentPath + "." + key;
-                if (value instanceof String && ((String) value).matches("\\$\\{\\{([a-zA-Z0-9\\-_]+?)\\}\\}")) {
-                    String variableName = ((String) value).replace("${{", "").replace("}}", "");
-                    variableJsonPaths.put(variableName, newPath);
+//                if (value instanceof String && ((String) value).matches("\\$\\{\\{([a-zA-Z0-9\\-_]+?)\\}\\}")) {
+                if (value instanceof String && isVariable((String) value)) {
+//                    String variableName = ((String) value).replace("${{", "").replace("}}", "");
+                    variableJsonPaths.put(extractVariableName((String) value), newPath);
                 } else {
                     traverseNode(value, newPath);
                 }
@@ -92,8 +93,8 @@ public class JsonTemplateProcessor extends TemplateProcessor {
     }
 
     public static void test() {
-        String template = FileReaderUtil.readFileFromResources("templates/template_2.json");
-        String content = FileReaderUtil.readFileFromResources("templates/sample_2.json");
+        String template = FileReaderUtil.readFileFromResources("templates/template_3.json");
+        String content = FileReaderUtil.readFileFromResources("templates/sample_3.json");
 
         JsonTemplateProcessor analyzer = new JsonTemplateProcessor();
         analyzer.analyzeTemplate(template);

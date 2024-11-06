@@ -1,0 +1,9 @@
+{
+  "Approved" : "${approvalStatus}",
+  "TransactionIdentifier" : "${txnID}",
+  "IsoResponseCode" : "${IsoResponseCode}",
+  "ResponseMessage" : "${ResponseMessage}",
+  "OrderIdentifier" : "${OrderID}}",
+  "RedirectData" : "${RedirectHTML}",
+  "SpiToken" : "${SpiToken}"
+}

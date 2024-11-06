@@ -9,7 +9,8 @@ import java.util.regex.Pattern;
 public abstract class TemplateProcessor {
     private static final Map<String, String> pathMap = new HashMap<>();
     private static final String INVALID_ATTRIBUTE_NAME_PATTERN = ".*[^a-zA-Z0-9_\\-\\.]+.*";
-    private static final String VARIABLE_NAME_PATTERN = "\\$\\{([a-zA-Z0-9\\-_]+?)\\}";
+//    private static final String VARIABLE_NAME_PATTERN = "\\$\\{([a-zA-Z0-9\\-_]+?)\\}";
+    private static final String VARIABLE_NAME_PATTERN = "\\$\\{([a-zA-Z][a-zA-Z0-9\\-_]*?)\\}";
 
     abstract void traverseNode(Object node, String currentPath);
 

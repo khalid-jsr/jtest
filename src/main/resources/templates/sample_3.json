@@ -1,0 +1,12 @@
+{
+  "TransactionType" : 2,
+  "Approved" : false,
+  "TransactionIdentifier" : "6b657d1b-5c92-4105-9a22-f59722ee219d",
+  "TotalAmount" : 9.53,
+  "CurrencyCode" : "840",
+  "IsoResponseCode" : "SP4",
+  "ResponseMessage" : "SPI Preprocessing complete",
+  "OrderIdentifier" : "264f8173-2943-4de7-8039-1044e8484bb6",
+  "RedirectData" : "<!DOCTYPE html><html><head></head><body><form id='powertranz_spi' name='powertranz_spi' action='https://staging.ptranz.com/api/spi/Conductor' method='POST'><input name='SpiToken' id='SpiToken' type='hidden' value='1arfqtwftqzmw6yik4kz862k114ememc4giw4wi8p1nhickfzb-3plyg9wt7wz'></form><script>window.onload=submitForm;function submitForm() {document.getElementById('powertranz_spi').submit();}</script></body></html>",
+  "SpiToken" : "1arfqtwftqzmw6yik4kz862k114ememc4giw4wi8p1nhickfzb-3plyg9wt7wz"
+}

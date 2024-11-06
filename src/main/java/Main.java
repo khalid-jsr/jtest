@@ -44,8 +44,8 @@ public class Main {
 //        RestTest.test();
 
 //        XMLTemplateProcessor.test();
-//        JsonTemplateProcessor.test();
+        JsonTemplateProcessor.test();
 
-        FreeMarkerTest.test();
+//        FreeMarkerTest.test();
     }
 }
