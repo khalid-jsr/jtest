@@ -1,4 +1,5 @@
 {
+  "TransactionType": 2,
   "Approved" : "${approvalStatus}",
   "TransactionIdentifier" : "${txnID}",
   "IsoResponseCode" : "${IsoResponseCode}",

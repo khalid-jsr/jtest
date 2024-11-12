@@ -1,5 +1,6 @@
 import me.test.api.*;
 import me.test.*;
+//import me.util.Utils;
 
 
 public class Main {
@@ -44,8 +45,10 @@ public class Main {
 //        RestTest.test();
 
 //        XMLTemplateProcessor.test();
-        JsonTemplateProcessor.test();
+//        JsonTemplateProcessor.test();
 
-//        FreeMarkerTest.test();
+        FreeMarkerTest.test();
+
+//        me.util.Utils.test();
     }
 }
